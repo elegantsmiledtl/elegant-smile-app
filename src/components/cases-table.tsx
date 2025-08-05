@@ -26,6 +26,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import CaseEntryForm from './case-entry-form';
+import { useState } from 'react';
+
 
 interface CasesTableProps {
   cases: DentalCase[];
@@ -34,6 +44,8 @@ interface CasesTableProps {
 }
 
 export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesTableProps) {
+  
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
   if (cases.length === 0) {
     return (
@@ -76,6 +88,26 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
               <TableCell>{c.shade}</TableCell>
               <TableCell className="max-w-[200px] truncate">{c.notes}</TableCell>
               <TableCell className="text-right">
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                  <DialogTrigger asChild>
+                     <Button variant="ghost" size="icon">
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Edit Case</DialogTitle>
+                    </DialogHeader>
+                    <CaseEntryForm 
+                      caseToEdit={c} 
+                      onAddCase={() => {}} 
+                      onUpdate={(updatedCase) => {
+                        onUpdateCase(updatedCase);
+                        setIsEditDialogOpen(false);
+                      }} 
+                    />
+                  </DialogContent>
+                </Dialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="ghost" size="icon">

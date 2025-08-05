@@ -42,7 +42,7 @@ type CaseFormValues = z.infer<typeof formSchema>;
 interface CaseEntryFormProps {
   onAddCase: (newCase: Omit<DentalCase, 'id'>) => void;
   caseToEdit?: DentalCase;
-  onUpdate?: () => void;
+  onUpdate?: (updatedCase: DentalCase) => void;
 }
 
 const materialOptions = ["Zolid", "Zirconia", "Nickel Free", "N-Guard", "Implant", "MookUp"];
@@ -63,27 +63,34 @@ export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseE
       notes: '',
     },
   });
+  
+  const isEditMode = !!caseToEdit;
 
   function onSubmit(values: CaseFormValues) {
-    if (caseToEdit && onUpdate) {
-        // This is an update, but the main page handles it.
-        // We can call onUpdate if we were handling updates inside a dialog.
+    if (isEditMode && onUpdate) {
+        onUpdate({ ...values, id: caseToEdit.id });
+        toast({
+            title: 'Case Updated',
+            description: `Case for ${values.patientName} has been successfully updated.`,
+        });
     } else {
         onAddCase(values);
-        toast({
-            title: 'Case Added',
-            description: `Case for ${values.patientName} has been successfully added.`,
-        });
-        form.reset({
-            patientName: '',
-            dentistName: '',
-            dueDate: undefined,
-            toothNumbers: '',
-            prosthesisType: '',
-            material: '',
-            shade: '',
-            notes: '',
-        });
+        if(!isEditMode) { // Only show toast and reset form on add, not on the dedicated add page which redirects.
+            toast({
+                title: 'Case Added',
+                description: `Case for ${values.patientName} has been successfully added.`,
+            });
+            form.reset({
+                patientName: '',
+                dentistName: '',
+                dueDate: undefined,
+                toothNumbers: '',
+                prosthesisType: '',
+                material: '',
+                shade: '',
+                notes: '',
+            });
+        }
     }
   }
 
@@ -214,7 +221,7 @@ export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseE
                                 <Checkbox
                                   checked={field.value?.split(', ').includes(item)}
                                   onCheckedChange={(checked) => {
-                                    const currentValues = field.value ? field.value.split(', ') : [];
+                                    const currentValues = field.value ? field.value.split(', ').filter(v => v) : [];
                                     if (checked) {
                                       field.onChange([...currentValues, item].join(', '));
                                     } else {

@@ -1,12 +1,21 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Upload, FileText, FileJson, FileUp, Sparkles } from 'lucide-react';
+import { Download, Upload, FileText, FileJson, FileUp, Sparkles, QrCode } from 'lucide-react';
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { convertJsonToCsv, downloadFile, generateReport } from '@/lib/utils';
 import Logo from './logo';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import QRCode from "react-qr-code";
+
 
 interface PageHeaderProps {
   cases: DentalCase[];
@@ -16,6 +25,13 @@ interface PageHeaderProps {
 export default function PageHeader({ cases, setCases }: PageHeaderProps) {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [addCaseUrl, setAddCaseUrl] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setAddCaseUrl(`${window.location.origin}/add-case`);
+    }
+  }, []);
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -133,6 +149,28 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
             accept=".json"
             className="hidden"
           />
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <QrCode className="mr-2 h-4 w-4" /> QR Code
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add Case via QR Code</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center space-x-2 mt-4 justify-center">
+                {addCaseUrl && (
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <QRCode value={addCaseUrl} />
+                    </div>
+                )}
+              </div>
+              <p className="text-center text-sm text-muted-foreground mt-2">
+                Scan this QR code with your phone to add a new case.
+              </p>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" size="sm" onClick={handleImportClick}>
             <FileUp className="mr-2 h-4 w-4" /> Import JSON
           </Button>
