@@ -87,8 +87,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
       <PopoverContent className="w-[350px] p-4">
         <div className="flex justify-center items-center">
             <svg width="330" height="400" viewBox="0 0 330 400">
-                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
-                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))">Left</text>
+                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Right</text>
+                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Left</text>
                 
                 {upperArchTeeth.map((num, index) => (
                     <Tooth
@@ -112,8 +112,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     />
                 ))}
                 
-                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
-                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))">Left</text>
+                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Right</text>
+                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Left</text>
             </svg>
         </div>
         <div className="flex justify-end gap-2 mt-2">
