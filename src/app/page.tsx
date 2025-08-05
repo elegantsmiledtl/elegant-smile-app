@@ -5,6 +5,7 @@ import type { DentalCase } from '@/types';
 import PageHeader from '@/components/page-header';
 import CaseEntryForm from '@/components/case-entry-form';
 import CasesTable from '@/components/cases-table';
+import Dashboard from '@/components/dashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -75,7 +76,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageHeader cases={cases} setCases={setCases} />
-      <main className="p-4 sm:p-6 lg:p-8">
+      <main className="p-4 sm:p-6 lg:p-8 space-y-6">
+        <Dashboard cases={cases} />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
             <CaseEntryForm onAddCase={handleAddCase} />
