@@ -1,22 +1,25 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import CaseEntryForm from '@/components/case-entry-form';
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import Logo from '@/components/logo';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import CasesTable from '@/components/cases-table';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
 
-export default function AddCasePage() {
+function AddCasePageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
   const [key, setKey] = useState(Date.now()); // Add key state to re-mount the form
   const [cases, setCases] = useState<DentalCase[]>([]);
+
+  const source = searchParams.get('source') as 'Mobile' | 'Desktop' | null;
 
   useEffect(() => {
     setIsMounted(true);
@@ -49,7 +52,11 @@ export default function AddCasePage() {
   const handleAddCase = (newCase: Omit<DentalCase, 'id'>) => {
     if (!isMounted) return;
     try {
-      const newCaseWithId = { ...newCase, id: crypto.randomUUID() };
+      const newCaseWithId: DentalCase = { 
+          ...newCase, 
+          id: crypto.randomUUID(),
+          source: source === 'Mobile' ? 'Mobile' : 'Desktop'
+      };
       const updatedCases = [...cases, newCaseWithId];
       setCases(updatedCases);
       
@@ -118,4 +125,13 @@ export default function AddCasePage() {
       </main>
     </div>
   );
+}
+
+
+export default function AddCasePage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AddCasePageContent />
+        </Suspense>
+    )
 }

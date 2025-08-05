@@ -8,4 +8,5 @@ export type DentalCase = {
   material: string;
   shade: string;
   notes?: string;
+  source?: 'Mobile' | 'Desktop';
 };

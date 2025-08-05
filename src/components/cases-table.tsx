@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, Smartphone, Monitor } from 'lucide-react';
 import type { DentalCase } from '@/types';
 import { format } from 'date-fns';
 
@@ -68,6 +68,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             <TableHead>Prosthesis</TableHead>
             <TableHead>Material</TableHead>
             <TableHead>Shade</TableHead>
+            <TableHead>Source</TableHead>
             <TableHead>Notes</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -86,6 +87,12 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
               <TableCell>{c.prosthesisType}</TableCell>
               <TableCell>{c.material}</TableCell>
               <TableCell>{c.shade}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                    {c.source === 'Mobile' ? <Smartphone className="h-4 w-4 text-muted-foreground" /> : <Monitor className="h-4 w-4 text-muted-foreground" />}
+                    {c.source}
+                </div>
+              </TableCell>
               <TableCell className="max-w-[200px] truncate">{c.notes}</TableCell>
               <TableCell className="text-right">
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

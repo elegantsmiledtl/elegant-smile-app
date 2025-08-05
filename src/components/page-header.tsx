@@ -34,6 +34,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       url.pathname = '/add-case';
+      url.searchParams.set('source', 'Mobile');
       setAddCaseUrl(url.toString());
     }
   }, []);
