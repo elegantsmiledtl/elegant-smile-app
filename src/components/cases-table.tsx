@@ -52,9 +52,11 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             <TableHead>Patient</TableHead>
             <TableHead>Dentist</TableHead>
             <TableHead>Due Date</TableHead>
+            <TableHead>Tooth #(s)</TableHead>
             <TableHead>Prosthesis</TableHead>
             <TableHead>Material</TableHead>
             <TableHead>Shade</TableHead>
+            <TableHead>Notes</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -68,9 +70,11 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
                 </Link>
               </TableCell>
               <TableCell>{format(c.dueDate, 'MMM d, yyyy')}</TableCell>
+              <TableCell>{c.toothNumbers}</TableCell>
               <TableCell>{c.prosthesisType}</TableCell>
               <TableCell>{c.material}</TableCell>
               <TableCell>{c.shade}</TableCell>
+              <TableCell className="max-w-[200px] truncate">{c.notes}</TableCell>
               <TableCell className="text-right">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
