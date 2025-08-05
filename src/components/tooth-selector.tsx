@@ -25,20 +25,21 @@ const Tooth: React.FC<ToothProps> = ({ number, isSelected, onClick, x, y }) => (
 const upperArchCoords = [
   { x: 30, y: 110 }, { x: 40, y: 80 }, { x: 55, y: 55 }, { x: 75, y: 35 }, { x: 100, y: 20 }, { x: 125, y: 12 }, { x: 150, y: 10 }, { x: 175, y: 10 },
   { x: 200, y: 12 }, { x: 225, y: 20 }, { x: 250, y: 35 }, { x: 270, y: 55 }, { x: 285, y: 80 }, { x: 295, y: 110 }, { x: 300, y: 140 }, { x: 300, y: 170 }
-];
+].reverse(); // Reverse for right-to-left rendering
 
 const lowerArchCoords = [
-  { x: 300, y: 210 }, { x: 300, y: 240 }, { x: 295, y: 270 }, { x: 285, y: 300 }, { x: 270, y: 325 }, { x: 250, y: 345 }, { x: 225, y: 360 }, { x: 200, y: 368 },
-  { x: 175, y: 370 }, { x: 150, y: 370 }, { x: 125, y: 368 }, { x: 100, y: 360 }, { x: 75, y: 345 }, { x: 55, y: 325 }, { x: 40, y: 295 }, { x: 30, y: 265 }
-];
+  { x: 30, y: 265 }, { x: 40, y: 295 }, { x: 55, y: 325 }, { x: 75, y: 345 }, { x: 100, y: 360 }, { x: 125, y: 368 }, { x: 150, y: 370 }, { x: 175, y: 370 },
+  { x: 200, y: 368 }, { x: 225, y: 360 }, { x: 250, y: 345 }, { x: 270, y: 325 }, { x: 285, y: 300 }, { x: 295, y: 270 }, { x: 300, y: 240 }, { x: 300, y: 210 }
+].reverse(); // Reverse for right-to-left rendering
 
+// FDI World Dental Federation notation
 const upperRightTeeth = [18, 17, 16, 15, 14, 13, 12, 11];
-const upperLeftTeeth = [21, 22, 23, 24, 25, 26, 27, 28];
-const lowerLeftTeeth = [31, 32, 33, 34, 35, 36, 37, 38];
+const upperLeftTeeth =  [21, 22, 23, 24, 25, 26, 27, 28];
+const lowerLeftTeeth =  [31, 32, 33, 34, 35, 36, 37, 38];
 const lowerRightTeeth = [48, 47, 46, 45, 44, 43, 42, 41];
 
-const upperArchTeeth = [...upperRightTeeth.slice().reverse(), ...upperLeftTeeth];
-const lowerArchTeeth = [...lowerLeftTeeth, ...lowerRightTeeth.slice().reverse()];
+const upperArchTeeth = [...upperRightTeeth, ...upperLeftTeeth];
+const lowerArchTeeth = [...lowerRightTeeth, ...lowerLeftTeeth];
 
 
 interface ToothSelectorProps {
@@ -86,8 +87,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
       <PopoverContent className="w-[350px] p-4">
         <div className="flex justify-center items-center">
             <svg width="330" height="400" viewBox="0 0 330 400">
-                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))" className="font-sans">Upper Left</text>
-                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" className="font-sans" textAnchor="end">Upper Right</text>
+                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
+                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))">Left</text>
                 
                 {upperArchTeeth.map((num, index) => (
                     <Tooth
@@ -111,8 +112,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     />
                 ))}
                 
-                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))" className="font-sans">Lower Left</text>
-                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" className="font-sans" textAnchor="end">Lower Right</text>
+                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
+                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))">Left</text>
             </svg>
         </div>
         <div className="flex justify-end gap-2 mt-2">
