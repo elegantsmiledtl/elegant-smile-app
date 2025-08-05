@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -30,6 +31,14 @@ const lowerArchCoords = [
   { x: 300, y: 210 }, { x: 300, y: 240 }, { x: 295, y: 270 }, { x: 285, y: 300 }, { x: 270, y: 325 }, { x: 250, y: 345 }, { x: 225, y: 360 }, { x: 200, y: 368 },
   { x: 175, y: 370 }, { x: 150, y: 370 }, { x: 125, y: 368 }, { x: 100, y: 360 }, { x: 75, y: 345 }, { x: 55, y: 325 }, { x: 40, y: 295 }, { x: 30, y: 265 }
 ];
+
+const upperRightTeeth = [18, 17, 16, 15, 14, 13, 12, 11];
+const upperLeftTeeth = [21, 22, 23, 24, 25, 26, 27, 28];
+const lowerLeftTeeth = [31, 32, 33, 34, 35, 36, 37, 38];
+const lowerRightTeeth = [48, 47, 46, 45, 44, 43, 42, 41];
+
+const upperArchTeeth = [...upperRightTeeth.slice().reverse(), ...upperLeftTeeth];
+const lowerArchTeeth = [...lowerLeftTeeth, ...lowerRightTeeth.slice().reverse()];
 
 
 interface ToothSelectorProps {
@@ -79,7 +88,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
             <svg width="330" height="400" viewBox="0 0 330 400">
                 <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))" className="font-sans">Upper Left</text>
                 <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" className="font-sans" textAnchor="end">Upper Right</text>
-                {Array.from({ length: 16 }, (_, i) => i + 1).map((num, index) => (
+                
+                {upperArchTeeth.map((num, index) => (
                     <Tooth
                     key={num}
                     number={num}
@@ -90,7 +100,7 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     />
                 ))}
 
-                {Array.from({ length: 16 }, (_, i) => i + 17).map((num, index) => (
+                {lowerArchTeeth.map((num, index) => (
                     <Tooth
                     key={num}
                     number={num}
@@ -100,6 +110,7 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     y={lowerArchCoords[index].y}
                     />
                 ))}
+                
                 <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))" className="font-sans">Lower Left</text>
                 <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" className="font-sans" textAnchor="end">Lower Right</text>
             </svg>
