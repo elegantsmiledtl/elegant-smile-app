@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import {
   Table,
   TableBody,
@@ -61,7 +62,11 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
           {cases.map((c) => (
             <TableRow key={c.id}>
               <TableCell className="font-medium">{c.patientName}</TableCell>
-              <TableCell>{c.dentistName}</TableCell>
+              <TableCell>
+                <Link href={`/doctor/${encodeURIComponent(c.dentistName)}`} className="text-primary hover:underline">
+                  {c.dentistName}
+                </Link>
+              </TableCell>
               <TableCell>{format(c.dueDate, 'MMM d, yyyy')}</TableCell>
               <TableCell>{c.prosthesisType}</TableCell>
               <TableCell>{c.material}</TableCell>
