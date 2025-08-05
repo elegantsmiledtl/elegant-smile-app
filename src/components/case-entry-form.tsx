@@ -23,6 +23,7 @@ import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import type { DentalCase } from '@/types';
 import AiSuggester from './ai-suggester';
+import ToothSelector from './tooth-selector';
 
 const formSchema = z.object({
   patientName: z.string().min(2, { message: 'Patient name must be at least 2 characters.' }),
@@ -162,7 +163,7 @@ export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseE
                 <FormItem>
                   <FormLabel>Tooth Number(s)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 8, 9, 14" {...field} />
+                    <ToothSelector value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
