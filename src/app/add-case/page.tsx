@@ -14,6 +14,7 @@ export default function AddCasePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
+  const [key, setKey] = useState(Date.now()); // Add key state to re-mount the form
 
   useEffect(() => {
     setIsMounted(true);
@@ -29,11 +30,13 @@ export default function AddCasePage() {
       localStorage.setItem('dentalCases', JSON.stringify(updatedCases));
       
       toast({
-        title: 'Case Added',
+        title: 'GOT IT',
         description: `Case for ${newCase.patientName} has been successfully added.`,
       });
 
-      router.push('/');
+      // Reset the form by changing the key, which forces a re-render
+      setKey(Date.now());
+
     } catch (error) {
        console.error("Failed to save case to local storage", error);
        toast({
@@ -64,7 +67,7 @@ export default function AddCasePage() {
       </header>
       <main className="p-4 sm:p-6 lg:p-8 flex justify-center">
         <div className="w-full max-w-lg">
-            <CaseEntryForm onAddCase={handleAddCase} onUpdate={handleUpdate} />
+            <CaseEntryForm key={key} onAddCase={handleAddCase} onUpdate={handleUpdate} />
         </div>
       </main>
     </div>
