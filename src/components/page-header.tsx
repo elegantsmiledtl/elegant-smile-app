@@ -6,6 +6,7 @@ import { Download, Upload, FileText, FileJson, FileUp, Sparkles } from 'lucide-r
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { convertJsonToCsv, downloadFile, generateReport } from '@/lib/utils';
+import Logo from './logo';
 
 interface PageHeaderProps {
   cases: DentalCase[];
@@ -123,10 +124,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
   return (
     <header className="bg-card border-b shadow-sm p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold font-headline text-primary flex items-center gap-2">
-            <Sparkles className="w-7 h-7" />
-            Elegant Smile Data Hub
-        </h1>
+        <Logo />
         <div className="flex items-center gap-2">
           <input
             type="file"
