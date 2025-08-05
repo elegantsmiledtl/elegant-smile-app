@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { DentalCase } from '@/types';
 import AiSuggester from './ai-suggester';
 import ToothSelector from './tooth-selector';
+import { Checkbox } from './ui/checkbox';
 
 const formSchema = z.object({
   patientName: z.string().min(2, { message: 'Patient name must be at least 2 characters.' }),
@@ -31,7 +32,7 @@ const formSchema = z.object({
   dueDate: z.date({ required_error: 'A due date is required.' }),
   toothNumbers: z.string().min(1, { message: 'At least one tooth number is required.' }),
   prosthesisType: z.string().min(3, { message: 'Prosthesis type is required.' }),
-  material: z.string().min(3, { message: 'Material is required.' }),
+  material: z.string().min(1, { message: 'At least one material must be selected.' }),
   shade: z.string().min(1, { message: 'Shade is required.' }),
   notes: z.string().optional(),
 });
@@ -43,6 +44,8 @@ interface CaseEntryFormProps {
   caseToEdit?: DentalCase;
   onUpdate?: () => void;
 }
+
+const materialOptions = ["Zolid", "Zirconia", "Nickel Free", "N-Guard", "Implant", "MookUp"];
 
 export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseEntryFormProps) {
   const { toast } = useToast();
@@ -195,16 +198,44 @@ export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseE
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Material</FormLabel>
-                   <FormControl>
-                     <AiSuggester
-                        field={field}
-                        form={form}
-                        fieldName="material"
-                        placeholder="e.g., Zirconia, E-Max"
-                        fieldDescription="The material used for the prosthesis."
-                        contextualInformation="Common dental materials include Zirconia, E-Max, PFM, Gold, Porcelain."
+                  <div className="grid grid-cols-2 gap-2">
+                    {materialOptions.map((item) => (
+                      <FormField
+                        key={item}
+                        control={form.control}
+                        name="material"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.split(', ').includes(item)}
+                                  onCheckedChange={(checked) => {
+                                    const currentValues = field.value ? field.value.split(', ') : [];
+                                    if (checked) {
+                                      field.onChange([...currentValues, item].join(', '));
+                                    } else {
+                                      field.onChange(
+                                        currentValues.filter(
+                                          (value) => value !== item
+                                        ).join(', ')
+                                      );
+                                    }
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {item}
+                              </FormLabel>
+                            </FormItem>
+                          );
+                        }}
                       />
-                  </FormControl>
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
