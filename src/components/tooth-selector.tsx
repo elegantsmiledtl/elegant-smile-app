@@ -25,16 +25,16 @@ const Tooth: React.FC<ToothProps> = ({ number, isSelected, onClick, x, y }) => (
 const upperArchCoords = [
   { x: 30, y: 110 }, { x: 40, y: 80 }, { x: 55, y: 55 }, { x: 75, y: 35 }, { x: 100, y: 20 }, { x: 125, y: 12 }, { x: 150, y: 10 }, { x: 175, y: 10 },
   { x: 200, y: 12 }, { x: 225, y: 20 }, { x: 250, y: 35 }, { x: 270, y: 55 }, { x: 285, y: 80 }, { x: 295, y: 110 }, { x: 300, y: 140 }, { x: 300, y: 170 }
-].reverse(); // Reverse for right-to-left rendering
+];
 
 const lowerArchCoords = [
   { x: 30, y: 265 }, { x: 40, y: 295 }, { x: 55, y: 325 }, { x: 75, y: 345 }, { x: 100, y: 360 }, { x: 125, y: 368 }, { x: 150, y: 370 }, { x: 175, y: 370 },
   { x: 200, y: 368 }, { x: 225, y: 360 }, { x: 250, y: 345 }, { x: 270, y: 325 }, { x: 285, y: 300 }, { x: 295, y: 270 }, { x: 300, y: 240 }, { x: 300, y: 210 }
-].reverse(); // Reverse for right-to-left rendering
+];
 
 // FDI World Dental Federation notation
-const upperArchTeeth = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
-const lowerArchTeeth = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
+const upperArchTeeth = [28, 27, 26, 25, 24, 23, 22, 21, 11, 12, 13, 14, 15, 16, 17, 18];
+const lowerArchTeeth = [38, 37, 36, 35, 34, 33, 32, 31, 41, 42, 43, 44, 45, 46, 47, 48];
 
 
 interface ToothSelectorProps {
@@ -82,8 +82,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
       <PopoverContent className="w-[350px] p-4">
         <div className="flex justify-center items-center">
             <svg width="330" height="400" viewBox="0 0 330 400">
-                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Left</text>
-                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Right</text>
+                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
+                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Left</text>
                 
                 {upperArchTeeth.map((num, index) => (
                     <Tooth
@@ -107,8 +107,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     />
                 ))}
                 
-                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Left</text>
-                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Right</text>
+                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
+                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Left</text>
             </svg>
         </div>
         <div className="flex justify-end gap-2 mt-2">
