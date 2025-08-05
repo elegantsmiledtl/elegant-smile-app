@@ -55,14 +55,8 @@ export default function AddCasePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="bg-card border-b shadow-sm p-4">
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="container mx-auto flex justify-center items-center">
           <Logo />
-          <Button asChild variant="outline">
-            <Link href="/">
-                <Home className="mr-2" />
-                Back to Home
-            </Link>
-          </Button>
         </div>
       </header>
       <main className="p-4 sm:p-6 lg:p-8 flex justify-center">
