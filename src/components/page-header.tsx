@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Upload, FileText, FileJson, FileUp, Sparkles, QrCode } from 'lucide-react';
+import { Download, Upload, FileText, FileJson, FileUp, Sparkles, QrCode, PlusCircle } from 'lucide-react';
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { convertJsonToCsv, downloadFile, generateReport } from '@/lib/utils';
@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import QRCode from "react-qr-code";
+import Link from 'next/link';
 
 
 interface PageHeaderProps {
@@ -142,6 +143,11 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
       <div className="container mx-auto flex justify-between items-center">
         <Logo />
         <div className="flex items-center gap-2">
+            <Button asChild size="sm">
+                <Link href="/add-case">
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add New Case
+                </Link>
+            </Button>
           <input
             type="file"
             ref={fileInputRef}

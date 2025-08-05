@@ -25,6 +25,7 @@ import type { DentalCase } from '@/types';
 import AiSuggester from './ai-suggester';
 import ToothSelector from './tooth-selector';
 import { Checkbox } from './ui/checkbox';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   patientName: z.string().min(2, { message: 'Patient name must be at least 2 characters.' }),
@@ -40,15 +41,16 @@ const formSchema = z.object({
 type CaseFormValues = z.infer<typeof formSchema>;
 
 interface CaseEntryFormProps {
-  onAddCase: (newCase: Omit<DentalCase, 'id'>) => void;
   caseToEdit?: DentalCase;
   onUpdate?: (updatedCase: DentalCase) => void;
+  onAddCase?: (newCase: Omit<DentalCase, 'id'>) => void;
 }
 
 const materialOptions = ["Zolid", "Zirconia", "Nickel Free", "N-Guard", "Implant", "MookUp"];
 
-export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseEntryFormProps) {
+export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseEntryFormProps) {
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<CaseFormValues>({
     resolver: zodResolver(formSchema),
@@ -65,6 +67,7 @@ export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseE
   });
   
   const isEditMode = !!caseToEdit;
+  const isAddCasePage = !!onAddCase;
 
   function onSubmit(values: CaseFormValues) {
     if (isEditMode && onUpdate) {
@@ -73,24 +76,9 @@ export default function CaseEntryForm({ onAddCase, caseToEdit, onUpdate }: CaseE
             title: 'Case Updated',
             description: `Case for ${values.patientName} has been successfully updated.`,
         });
-    } else {
+    } else if (onAddCase) {
         onAddCase(values);
-        if(!isEditMode) { // Only show toast and reset form on add, not on the dedicated add page which redirects.
-            toast({
-                title: 'Case Added',
-                description: `Case for ${values.patientName} has been successfully added.`,
-            });
-            form.reset({
-                patientName: '',
-                dentistName: '',
-                dueDate: undefined,
-                toothNumbers: '',
-                prosthesisType: '',
-                material: '',
-                shade: '',
-                notes: '',
-            });
-        }
+        // The toast and redirect are now handled in the add-case page component.
     }
   }
 

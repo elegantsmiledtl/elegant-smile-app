@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import type { DentalCase } from '@/types';
 import PageHeader from '@/components/page-header';
-import CaseEntryForm from '@/components/case-entry-form';
 import CasesTable from '@/components/cases-table';
 import Dashboard from '@/components/dashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -59,10 +58,6 @@ export default function Home() {
     }
   }, [cases, isMounted]);
 
-  const handleAddCase = (newCase: Omit<DentalCase, 'id'>) => {
-    setCases(prevCases => [...prevCases, { ...newCase, id: crypto.randomUUID() }]);
-  };
-
   const handleDeleteCase = (id: string) => {
     setCases(prevCases => prevCases.filter(c => c.id !== id));
   };
@@ -72,7 +67,8 @@ export default function Home() {
   }
 
   const filteredCases = cases.filter(c => 
-    c.dentistName.toLowerCase().includes(searchQuery.toLowerCase())
+    c.dentistName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.patientName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (!isMounted) {
@@ -84,33 +80,26 @@ export default function Home() {
       <PageHeader cases={cases} setCases={setCases} />
       <main className="p-4 sm:p-6 lg:p-8 space-y-6">
         <Dashboard cases={filteredCases} />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <CaseEntryForm onAddCase={handleAddCase} />
-          </div>
-          <div className="lg:col-span-2">
-            <Card className="shadow-lg">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                    <CardTitle className="flex items-center gap-2 font-headline">
-                    <ToothIcon className="w-6 h-6 text-primary" />
-                    Current Cases
-                    </CardTitle>
-                    <div className="w-1/3">
-                        <Input 
-                            placeholder="Search by dentist..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2 font-headline">
+                <ToothIcon className="w-6 h-6 text-primary" />
+                Current Cases
+                </CardTitle>
+                <div className="w-1/3">
+                    <Input 
+                        placeholder="Search by dentist or patient..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
-              </CardHeader>
-              <CardContent>
-                <CasesTable cases={filteredCases} onDeleteCase={handleDeleteCase} onUpdateCase={handleUpdateCase}/>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CasesTable cases={filteredCases} onDeleteCase={handleDeleteCase} onUpdateCase={handleUpdateCase}/>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
