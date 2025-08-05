@@ -29,9 +29,8 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
   const [addCaseUrl, setAddCaseUrl] = useState('');
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setAddCaseUrl(`${window.location.origin}/add-case`);
-    }
+    // Set the URL directly to the one you provided.
+    setAddCaseUrl(`https://9000-firebase-studio-1754378922289.cluster-6frnii43o5blcu522sivebzpii.cloudworkstations.dev/add-case`);
   }, []);
 
   const handleImportClick = () => {
