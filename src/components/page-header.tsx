@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import QRCode from "react-qr-code";
 import Link from 'next/link';
+import { Toaster } from '@/components/ui/toaster';
 
 
 interface PageHeaderProps {
@@ -29,8 +30,12 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
   const [addCaseUrl, setAddCaseUrl] = useState('');
 
   useEffect(() => {
-    // Set the URL directly to the one you provided.
-    setAddCaseUrl(`https://9000-firebase-studio-1754378922289.cluster-6frnii43o5blcu522sivebzpii.cloudworkstations.dev/add-case`);
+    // Ensure this runs only on the client
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.pathname = '/add-case';
+      setAddCaseUrl(url.toString());
+    }
   }, []);
 
   const handleImportClick = () => {
@@ -139,13 +144,14 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
 
   return (
     <header className="bg-card border-b shadow-sm p-4">
+      <Toaster />
       <div className="container mx-auto flex justify-between items-center">
         <Logo />
         <div className="flex items-center gap-2">
-            <Button asChild size="sm">
-                <Link href="/add-case">
+            <Button asChild size="sm" >
+                <a href="/add-case">
                     <PlusCircle className="mr-2 h-4 w-4" /> Add New Case
-                </Link>
+                </a>
             </Button>
           <input
             type="file"
