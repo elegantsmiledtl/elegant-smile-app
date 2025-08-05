@@ -7,6 +7,7 @@ import CaseEntryForm from '@/components/case-entry-form';
 import CasesTable from '@/components/cases-table';
 import Dashboard from '@/components/dashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
 const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -28,6 +29,7 @@ const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function Home() {
   const [cases, setCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setIsMounted(true);
@@ -69,6 +71,10 @@ export default function Home() {
     setCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
   }
 
+  const filteredCases = cases.filter(c => 
+    c.dentistName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (!isMounted) {
     return null; // or a loading spinner
   }
@@ -77,7 +83,7 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground">
       <PageHeader cases={cases} setCases={setCases} />
       <main className="p-4 sm:p-6 lg:p-8 space-y-6">
-        <Dashboard cases={cases} />
+        <Dashboard cases={filteredCases} />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
             <CaseEntryForm onAddCase={handleAddCase} />
@@ -85,13 +91,22 @@ export default function Home() {
           <div className="lg:col-span-2">
             <Card className="shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-headline">
-                  <ToothIcon className="w-6 h-6 text-primary" />
-                  Current Cases
-                </CardTitle>
+                <div className="flex justify-between items-center">
+                    <CardTitle className="flex items-center gap-2 font-headline">
+                    <ToothIcon className="w-6 h-6 text-primary" />
+                    Current Cases
+                    </CardTitle>
+                    <div className="w-1/3">
+                        <Input 
+                            placeholder="Search by dentist..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <CasesTable cases={cases} onDeleteCase={handleDeleteCase} onUpdateCase={handleUpdateCase}/>
+                <CasesTable cases={filteredCases} onDeleteCase={handleDeleteCase} onUpdateCase={handleUpdateCase}/>
               </CardContent>
             </Card>
           </div>
