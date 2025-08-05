@@ -33,13 +33,8 @@ const lowerArchCoords = [
 ].reverse(); // Reverse for right-to-left rendering
 
 // FDI World Dental Federation notation
-const upperRightTeeth = [18, 17, 16, 15, 14, 13, 12, 11];
-const upperLeftTeeth =  [21, 22, 23, 24, 25, 26, 27, 28];
-const lowerLeftTeeth =  [31, 32, 33, 34, 35, 36, 37, 38];
-const lowerRightTeeth = [48, 47, 46, 45, 44, 43, 42, 41];
-
-const upperArchTeeth = [...upperRightTeeth, ...upperLeftTeeth];
-const lowerArchTeeth = [...lowerRightTeeth, ...lowerLeftTeeth];
+const upperArchTeeth = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
+const lowerArchTeeth = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
 
 
 interface ToothSelectorProps {
@@ -87,8 +82,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
       <PopoverContent className="w-[350px] p-4">
         <div className="flex justify-center items-center">
             <svg width="330" height="400" viewBox="0 0 330 400">
-                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Right</text>
-                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Left</text>
+                <text x="280" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
+                <text x="50" y="20" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Left</text>
                 
                 {upperArchTeeth.map((num, index) => (
                     <Tooth
@@ -112,8 +107,8 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     />
                 ))}
                 
-                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Right</text>
-                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Left</text>
+                <text x="280" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="end">Right</text>
+                <text x="50" y="390" fontSize="12" fill="hsl(var(--foreground))" textAnchor="start">Left</text>
             </svg>
         </div>
         <div className="flex justify-end gap-2 mt-2">
