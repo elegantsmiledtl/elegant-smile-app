@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,14 +15,23 @@ const DUMMY_USERS = [
   { email: 'dr.smith@example.com', password: 'password123', name: 'Dr. Smith' },
   { email: 'dr.jones@example.com', password: 'password123', name: 'Dr. Jones' },
   { email: 'ahmad@example.com', password: '123456', name: 'ahmad' },
+  { email: 'dr.ibraheem.omar@example.com', password: 'drhema', name: 'Dr.Ibraheem Omar' },
 ];
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const prefilledName = searchParams.get('name');
+    if (prefilledName) {
+      setName(decodeURIComponent(prefilledName));
+    }
+  }, [searchParams]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,4 +106,12 @@ export default function LoginPage() {
       </Card>
     </div>
   );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <LoginPageContent />
+        </Suspense>
+    )
 }

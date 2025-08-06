@@ -110,12 +110,20 @@ export default function OwnerPage() {
                 <ToothIcon className="w-6 h-6 text-primary" />
                 All Recorded Cases
                 </CardTitle>
-                 <Button asChild variant="outline">
-                  <Link href="/owner/qr">
-                    <QrCode className="mr-2" />
-                    Doctor Portal QR Code
-                  </Link>
-                </Button>
+                <div className="flex items-center gap-2">
+                     <Button asChild variant="outline">
+                      <Link href="/owner/qr">
+                        <QrCode className="mr-2" />
+                        Doctor Portal QR Code
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline">
+                      <Link href="/owner/qr-ibraheem">
+                        <QrCode className="mr-2" />
+                        Generate QR for Dr.Ibraheem
+                      </Link>
+                    </Button>
+                </div>
                 <div className="w-1/3">
                     <Input 
                         placeholder="Search by dentist or patient..."
