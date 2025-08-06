@@ -14,6 +14,7 @@ import Logo from '@/components/logo';
 const DUMMY_USERS = [
   { email: 'dr.smith@example.com', password: 'password123', name: 'Dr. Smith' },
   { email: 'dr.jones@example.com', password: 'password123', name: 'Dr. Jones' },
+  { email: 'ahmad@example.com', password: '123456', name: 'ahmad' },
 ];
 
 export default function LoginPage() {
