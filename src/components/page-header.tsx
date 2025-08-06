@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Upload, FileText, FileJson, FileUp, Sparkles, QrCode, PlusCircle, User } from 'lucide-react';
+import { Download, Upload, FileText, FileJson, FileUp, Sparkles, QrCode, PlusCircle, User, LogIn } from 'lucide-react';
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { convertJsonToCsv, downloadFile, generateReport } from '@/lib/utils';
@@ -154,7 +154,12 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
                     <User className="mr-2 h-4 w-4" /> Owner View
                 </Link>
             </Button>
-            <Button asChild size="sm" >
+            <Button asChild size="sm" variant="secondary">
+                <Link href="/login">
+                    <LogIn className="mr-2 h-4 w-4" /> Doctor Portal
+                </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
                 <a href="/add-case">
                     <PlusCircle className="mr-2 h-4 w-4" /> Add New Case
                 </a>
