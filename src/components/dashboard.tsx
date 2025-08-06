@@ -38,6 +38,7 @@ export default function Dashboard({ cases }: DashboardProps) {
         casesByDentist: [],
         prosthesisTypeDistribution: [],
         materialUsage: [],
+        teethByMaterial: [],
     };
 
     const casesByDentist = cases.reduce((acc, c) => {
@@ -54,6 +55,15 @@ export default function Dashboard({ cases }: DashboardProps) {
         const materials = c.material.split(',').map(m => m.trim()).filter(m => m);
         materials.forEach(material => {
             acc[material] = (acc[material] || 0) + 1;
+        });
+        return acc;
+    }, {} as Record<string, number>);
+
+    const teethByMaterial = cases.reduce((acc, c) => {
+        const toothCount = c.toothNumbers.split(',').filter(t => t.trim() !== '').length;
+        const materials = c.material.split(',').map(m => m.trim()).filter(m => m);
+        materials.forEach(material => {
+            acc[material] = (acc[material] || 0) + toothCount;
         });
         return acc;
     }, {} as Record<string, number>);
@@ -75,6 +85,7 @@ export default function Dashboard({ cases }: DashboardProps) {
         casesByDentist: Object.entries(casesByDentist).map(([name, value]) => ({ name, cases: value })),
         prosthesisTypeDistribution: Object.entries(prosthesisTypeDistribution).map(([name, value]) => ({ name, value })),
         materialUsage: Object.entries(materialUsage).map(([name, value]) => ({ name, count: value })),
+        teethByMaterial: Object.entries(teethByMaterial).map(([name, value]) => ({ name, teeth: value })),
     }
 
   }, [cases]);
@@ -85,8 +96,8 @@ export default function Dashboard({ cases }: DashboardProps) {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+        <Card className="lg:col-span-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Teeth</CardTitle>
                 <ToothIcon className="h-4 w-4 text-muted-foreground" />
@@ -96,7 +107,7 @@ export default function Dashboard({ cases }: DashboardProps) {
                 <p className="text-xs text-muted-foreground">Across all cases</p>
             </CardContent>
         </Card>
-        <Card>
+        <Card className="lg:col-span-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Materials Used</CardTitle>
                 <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
@@ -127,9 +138,9 @@ export default function Dashboard({ cases }: DashboardProps) {
                 <CardTitle>Prosthesis Type Distribution</CardTitle>
             </CardHeader>
             <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
-                        <Pie data={stats.prosthesisTypeDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                        <Pie data={stats.prosthesisTypeDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
                             {stats.prosthesisTypeDistribution.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
@@ -140,9 +151,9 @@ export default function Dashboard({ cases }: DashboardProps) {
                 </ResponsiveContainer>
             </CardContent>
         </Card>
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-3">
             <CardHeader>
-                <CardTitle>Material Usage Breakdown</CardTitle>
+                <CardTitle>Case Count by Material</CardTitle>
             </CardHeader>
             <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -152,6 +163,22 @@ export default function Dashboard({ cases }: DashboardProps) {
                         <YAxis type="category" dataKey="name" width={80} fontSize={12} tickLine={false} axisLine={false} />
                         <Tooltip />
                         <Bar dataKey="count" fill="hsl(var(--accent))" radius={[0, 4, 4, 0]}/>
+                    </BarChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+         <Card className="lg:col-span-3">
+            <CardHeader>
+                <CardTitle>Teeth Count by Material</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                     <BarChart data={stats.teethByMaterial} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" />
+                        <YAxis type="category" dataKey="name" width={80} fontSize={12} tickLine={false} axisLine={false} />
+                        <Tooltip />
+                        <Bar dataKey="teeth" fill="hsl(var(--secondary))" radius={[0, 4, 4, 0]}/>
                     </BarChart>
                 </ResponsiveContainer>
             </CardContent>
