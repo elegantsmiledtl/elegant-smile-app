@@ -10,6 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { QrCode } from 'lucide-react';
+import { getCases, deleteCase, updateCase } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
+
 
 const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -32,41 +35,43 @@ export default function OwnerPage() {
   const [cases, setCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { toast } = useToast();
+
+  const fetchCases = async () => {
+    try {
+        const casesFromDb = await getCases();
+        setCases(casesFromDb);
+    } catch (error) {
+        console.error("Failed to fetch cases from Firestore", error);
+        toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch cases from the database.' });
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
-    try {
-      const savedCases = localStorage.getItem('dentalCases');
-      if (savedCases) {
-        const parsedCases = JSON.parse(savedCases, (key, value) => {
-          if (key === 'dueDate') {
-            return new Date(value);
-          }
-          return value;
-        });
-        setCases(parsedCases);
-      }
-    } catch (error) {
-      console.error("Failed to load cases from local storage", error);
-    }
+    fetchCases();
   }, []);
 
-  useEffect(() => {
-    if(isMounted) {
-      try {
-        localStorage.setItem('dentalCases', JSON.stringify(cases));
-      } catch (error) {
-        console.error("Failed to save cases to local storage", error);
-      }
+  const handleDeleteCase = async (id: string) => {
+    try {
+        await deleteCase(id);
+        setCases(prevCases => prevCases.filter(c => c.id !== id));
+        toast({ title: "Success", description: "Case deleted successfully." });
+    } catch (error) {
+        console.error("Failed to delete case", error);
+        toast({ variant: 'destructive', title: "Error", description: "Failed to delete case." });
     }
-  }, [cases, isMounted]);
-
-  const handleDeleteCase = (id: string) => {
-    setCases(prevCases => prevCases.filter(c => c.id !== id));
   };
   
-  const handleUpdateCase = (updatedCase: DentalCase) => {
-    setCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
+  const handleUpdateCase = async (updatedCase: DentalCase) => {
+     try {
+        await updateCase(updatedCase.id, updatedCase);
+        setCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
+        toast({ title: "Success", description: "Case updated successfully." });
+    } catch (error) {
+        console.error("Failed to update case", error);
+        toast({ variant: 'destructive', title: "Error", description: "Failed to update case." });
+    }
   }
 
   const filteredCases = cases.filter(c => 

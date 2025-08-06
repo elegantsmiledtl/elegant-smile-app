@@ -8,11 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Stethoscope, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/logo';
+import { addCase } from '@/lib/firebase';
 
 export default function DoctorPortalPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [allCases, setAllCases] = useState<DentalCase[]>([]);
   const [doctorName, setDoctorName] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [formKey, setFormKey] = useState(Date.now());
@@ -27,42 +27,19 @@ export default function DoctorPortalPage() {
       } else {
         router.push('/login');
       }
-
-      const savedCases = localStorage.getItem('dentalCases');
-      if (savedCases) {
-        const parsedCases: DentalCase[] = JSON.parse(savedCases, (key, value) => {
-          if (key === 'dueDate') {
-            return new Date(value);
-          }
-          return value;
-        });
-        setAllCases(parsedCases);
-      }
     } catch (error) {
       console.error("Failed to load data from local storage", error);
     }
   }, [router]);
 
-  useEffect(() => {
-    if(isMounted) {
-      try {
-        localStorage.setItem('dentalCases', JSON.stringify(allCases));
-      } catch (error) {
-        console.error("Failed to save cases to local storage", error);
-      }
-    }
-  }, [allCases, isMounted]);
-
-  const handleAddCase = (newCase: Omit<DentalCase, 'id'>) => {
+  const handleAddCase = async (newCase: Omit<DentalCase, 'id'>) => {
     if (!isMounted) return;
     try {
-      const newCaseWithId: DentalCase = { 
+      const caseWithSource: Omit<DentalCase, 'id'> = { 
           ...newCase, 
-          id: crypto.randomUUID(),
           source: 'Desktop' // Assuming doctor portal is on desktop
       };
-      const updatedCases = [...allCases, newCaseWithId];
-      setAllCases(updatedCases);
+      await addCase(caseWithSource);
       
       toast({
         title: 'Case Added',
@@ -73,7 +50,7 @@ export default function DoctorPortalPage() {
       setFormKey(Date.now());
 
     } catch (error) {
-       console.error("Failed to save case to local storage", error);
+       console.error("Failed to save case to Firestore", error);
        toast({
         variant: "destructive",
         title: "Failed to add case",

@@ -10,49 +10,53 @@ import { Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
+import { getCasesByDoctor, deleteCase, updateCase } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DoctorPage() {
   const params = useParams();
   const dentistName = params.dentistName ? decodeURIComponent(params.dentistName as string) : '';
-  const [allCases, setAllCases] = useState<DentalCase[]>([]);
   const [doctorCases, setDoctorCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const { toast } = useToast();
+
+  const fetchDoctorCases = async () => {
+      if(dentistName) {
+        try {
+            const casesFromDb = await getCasesByDoctor(dentistName);
+            setDoctorCases(casesFromDb);
+        } catch (error) {
+            console.error(`Failed to fetch cases for ${dentistName}`, error);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch cases for this doctor.' });
+        }
+      }
+  };
 
   useEffect(() => {
     setIsMounted(true);
-    try {
-      const savedCases = localStorage.getItem('dentalCases');
-      if (savedCases) {
-        const parsedCases: DentalCase[] = JSON.parse(savedCases, (key, value) => {
-          if (key === 'dueDate') {
-            return new Date(value);
-          }
-          return value;
-        });
-        setAllCases(parsedCases);
-      }
-    } catch (error) {
-      console.error("Failed to load cases from local storage", error);
-    }
-  }, []);
+    fetchDoctorCases();
+  }, [dentistName]);
 
-  useEffect(() => {
-    if (dentistName && allCases.length > 0) {
-      const filteredCases = allCases.filter(c => c.dentistName === dentistName);
-      setDoctorCases(filteredCases);
+  const handleDeleteCase = async (id: string) => {
+    try {
+        await deleteCase(id);
+        setDoctorCases(prevCases => prevCases.filter(c => c.id !== id));
+        toast({ title: "Success", description: "Case deleted successfully." });
+    } catch (error) {
+        console.error("Failed to delete case", error);
+        toast({ variant: 'destructive', title: "Error", description: "Failed to delete case." });
     }
-  }, [dentistName, allCases]);
-  
-  const handleDeleteCase = (id: string) => {
-    const updatedCases = allCases.filter(c => c.id !== id);
-    setAllCases(updatedCases);
-    localStorage.setItem('dentalCases', JSON.stringify(updatedCases));
   };
   
-  const handleUpdateCase = (updatedCase: DentalCase) => {
-    const updatedCases = allCases.map(c => c.id === updatedCase.id ? updatedCase : c);
-    setAllCases(updatedCases);
-    localStorage.setItem('dentalCases', JSON.stringify(updatedCases));
+  const handleUpdateCase = async (updatedCase: DentalCase) => {
+    try {
+        await updateCase(updatedCase.id, updatedCase);
+        setDoctorCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
+        toast({ title: "Success", description: "Case updated successfully." });
+    } catch (error) {
+        console.error("Failed to update case", error);
+        toast({ variant: 'destructive', title: "Error", description: "Failed to update case." });
+    }
   };
 
   if (!isMounted) {
@@ -61,7 +65,7 @@ export default function DoctorPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PageHeader cases={allCases} setCases={setAllCases} />
+      <PageHeader cases={doctorCases} setCases={setDoctorCases} />
       <main className="p-4 sm:p-6 lg:p-8">
         <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold text-primary flex items-center gap-3">
