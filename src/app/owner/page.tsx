@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,6 +7,9 @@ import CasesTable from '@/components/cases-table';
 import Dashboard from '@/components/dashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { QrCode } from 'lucide-react';
 
 const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -88,6 +90,12 @@ export default function OwnerPage() {
                 <ToothIcon className="w-6 h-6 text-primary" />
                 All Recorded Cases
                 </CardTitle>
+                 <Button asChild variant="outline">
+                  <Link href="/owner/qr">
+                    <QrCode className="mr-2" />
+                    Doctor Portal QR Code
+                  </Link>
+                </Button>
                 <div className="w-1/3">
                     <Input 
                         placeholder="Search by dentist or patient..."
