@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import CaseEntryForm from '@/components/case-entry-form';
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import Logo from '@/components/logo';
 import { useEffect, useState, Suspense } from 'react';
 import CasesTable from '@/components/cases-table';
 import { Button } from '@/components/ui/button';
@@ -113,7 +112,7 @@ function AddCasePageContent() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="bg-card border-b shadow-sm p-4">
         <div className="container mx-auto flex justify-between items-center">
-          <Logo />
+          <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
            {isMobileSource ? (
             <div className="flex items-center gap-2 text-primary">
               <Smartphone />

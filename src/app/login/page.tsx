@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -7,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import Logo from '@/components/logo';
 
 // In a real application, you would use Firebase Auth or another auth provider.
 // This is a simplified example.
@@ -64,7 +64,7 @@ function LoginPageContent() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
        <div className="absolute top-8 left-8">
-         <Logo />
+         <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
       </div>
       <Card className="w-full max-w-sm shadow-2xl">
         <CardHeader>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
@@ -6,7 +7,6 @@ import { Download, Upload, FileText, FileJson, FileUp, Sparkles, QrCode, PlusCir
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { convertJsonToCsv, downloadFile, generateReport } from '@/lib/utils';
-import Logo from './logo';
 import {
   Dialog,
   DialogContent,
@@ -50,7 +50,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
         try {
           const text = e.target?.result as string;
           const importedCases = JSON.parse(text, (key, value) => {
-            if (key === 'dueDate' && typeof value === 'string') {
+            if (key === 'createdAt' && typeof value === 'string') {
               return new Date(value);
             }
             return value;
@@ -146,7 +146,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
     <header className="bg-card border-b shadow-sm p-4">
       <Toaster />
       <div className="container mx-auto flex justify-between items-center">
-        <Logo />
+        <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
         <div className="flex items-center gap-2">
             <Button asChild size="sm">
                 <Link href="/owner">

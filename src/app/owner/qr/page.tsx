@@ -1,9 +1,9 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import Logo from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
@@ -45,7 +45,7 @@ export default function DoctorQrCodePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
        <div className="absolute top-8 left-8">
-         <Logo />
+         <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
       </div>
        <div className="absolute top-8 right-8">
          <Button asChild variant="outline">
