@@ -46,6 +46,12 @@ interface CasesTableProps {
 export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesTableProps) {
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [caseToEdit, setCaseToEdit] = useState<DentalCase | null>(null);
+
+  const handleEditClick = (caseData: DentalCase) => {
+    setCaseToEdit(caseData);
+    setIsEditDialogOpen(true);
+  }
   
   if (cases.length === 0) {
     return (
@@ -95,26 +101,9 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
               </TableCell>
               <TableCell className="max-w-[200px] truncate">{c.notes}</TableCell>
               <TableCell className="text-right">
-                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                  <DialogTrigger asChild>
-                     <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Edit Case</DialogTitle>
-                    </DialogHeader>
-                    <CaseEntryForm 
-                      caseToEdit={c} 
-                      onAddCase={() => {}} 
-                      onUpdate={(updatedCase) => {
-                        onUpdateCase(updatedCase);
-                        setIsEditDialogOpen(false);
-                      }} 
-                    />
-                  </DialogContent>
-                </Dialog>
+                <Button variant="ghost" size="icon" onClick={() => handleEditClick(c)}>
+                    <Edit className="h-4 w-4" />
+                </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="ghost" size="icon">
@@ -142,6 +131,23 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
           ))}
         </TableBody>
       </Table>
+       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Case</DialogTitle>
+            </DialogHeader>
+            {caseToEdit && (
+                 <CaseEntryForm 
+                  caseToEdit={caseTo-edit} 
+                  onUpdate={(updatedCase) => {
+                    onUpdateCase(updatedCase);
+                    setIsEditDialogOpen(false);
+                    setCaseToEdit(null);
+                  }} 
+                />
+            )}
+          </DialogContent>
+        </Dialog>
     </div>
   );
 }

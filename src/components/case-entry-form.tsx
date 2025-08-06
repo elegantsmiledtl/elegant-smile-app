@@ -41,7 +41,7 @@ const formSchema = z.object({
 type CaseFormValues = z.infer<typeof formSchema>;
 
 interface CaseEntryFormProps {
-  caseToEdit?: DentalCase;
+  caseToEdit?: Partial<DentalCase>; // Allow partial for template
   onUpdate?: (updatedCase: DentalCase) => void;
   onAddCase?: (newCase: Omit<DentalCase, 'id'>) => void;
 }
@@ -66,11 +66,10 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
     },
   });
   
-  const isEditMode = !!caseToEdit;
-  const isAddCasePage = !!onAddCase;
+  const isEditMode = !!caseToEdit?.id;
 
   function onSubmit(values: CaseFormValues) {
-    if (isEditMode && onUpdate) {
+    if (isEditMode && onUpdate && caseToEdit.id) {
         onUpdate({ ...values, id: caseToEdit.id });
         toast({
             title: 'Case Updated',
@@ -78,7 +77,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
         });
     } else if (onAddCase) {
         onAddCase(values);
-        // The toast and redirect are now handled in the add-case page component.
+        // The toast and reset are now handled in the page component.
     }
   }
 
@@ -87,7 +86,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <PlusCircle className="w-6 h-6 text-primary" />
-          {caseToEdit ? 'Edit Case' : 'Add New Case'}
+          {isEditMode ? 'Edit Case' : 'Add New Case'}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -113,7 +112,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                 <FormItem>
                   <FormLabel>Dentist Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Dr. Smith" {...field} />
+                    <Input placeholder="Dr. Smith" {...field} disabled={!!caseToEdit?.dentistName} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -263,7 +262,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
             />
             <Button type="submit" className="w-full bg-accent hover:bg-accent/90">
                 <Save className="mr-2 h-4 w-4" />
-                {caseToEdit ? 'Save Changes' : 'Add Case'}
+                {isEditMode ? 'Save Changes' : 'Add Case'}
             </Button>
           </form>
         </Form>
