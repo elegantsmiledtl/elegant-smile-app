@@ -18,7 +18,6 @@ import { PlusCircle, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import type { DentalCase } from '@/types';
-import AiSuggester from './ai-suggester';
 import ToothSelector from './tooth-selector';
 import { Checkbox } from './ui/checkbox';
 import { useRouter } from 'next/navigation';
@@ -27,7 +26,7 @@ const formSchema = z.object({
   patientName: z.string().min(2, { message: 'Patient name must be at least 2 characters.' }),
   dentistName: z.string().min(2, { message: 'Dentist name must be at least 2 characters.' }),
   toothNumbers: z.string().min(1, { message: 'At least one tooth number is required.' }),
-  prosthesisType: z.string().min(3, { message: 'Prosthesis type is required.' }),
+  prosthesisType: z.string().min(1, { message: 'At least one prosthesis type must be selected.' }),
   material: z.string().min(1, { message: 'At least one material must be selected.' }),
   shade: z.string().min(1, { message: 'Shade is required.' }),
   notes: z.string().optional(),
@@ -42,6 +41,7 @@ interface CaseEntryFormProps {
 }
 
 const materialOptions = ["Zolid", "Zirconia", "Nickel Free", "N-Guard", "Implant", "MookUp"];
+const prosthesisTypeOptions = ["Separate", "Bridge"];
 
 export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseEntryFormProps) {
   const { toast } = useToast();
@@ -125,22 +125,50 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                 </FormItem>
               )}
             />
-            <FormField
+             <FormField
               control={form.control}
               name="prosthesisType"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Prosthesis Type</FormLabel>
-                  <FormControl>
-                     <AiSuggester
-                        field={field}
-                        form={form}
-                        fieldName="prosthesisType"
-                        placeholder="e.g., Crown, Bridge"
-                        fieldDescription="The type of dental prosthesis."
-                        contextualInformation="This is for a dental lab case entry form."
+                   <div className="grid grid-cols-2 gap-2">
+                    {prosthesisTypeOptions.map((item) => (
+                      <FormField
+                        key={item}
+                        control={form.control}
+                        name="prosthesisType"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.split(', ').includes(item)}
+                                  onCheckedChange={(checked) => {
+                                    const currentValues = field.value ? field.value.split(', ').filter(v => v) : [];
+                                    if (checked) {
+                                      field.onChange([...currentValues, item].join(', '));
+                                    } else {
+                                      field.onChange(
+                                        currentValues.filter(
+                                          (value) => value !== item
+                                        ).join(', ')
+                                      );
+                                    }
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {item}
+                              </FormLabel>
+                            </FormItem>
+                          );
+                        }}
                       />
-                  </FormControl>
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
