@@ -19,7 +19,7 @@ const DUMMY_USERS = [
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,7 +29,7 @@ export default function LoginPage() {
 
     setTimeout(() => {
       const user = DUMMY_USERS.find(
-        (u) => u.email === email && u.password === password
+        (u) => u.name === name && u.password === password
       );
 
       if (user) {
@@ -44,7 +44,7 @@ export default function LoginPage() {
         toast({
           variant: 'destructive',
           title: 'Login Failed',
-          description: 'Invalid email or password.',
+          description: 'Invalid name or password.',
         });
         setIsLoading(false);
       }
@@ -66,14 +66,14 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleLogin} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="name">Name</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
+                id="name"
+                type="text"
+                placeholder="e.g. Dr. Smith"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 disabled={isLoading}
               />
             </div>
