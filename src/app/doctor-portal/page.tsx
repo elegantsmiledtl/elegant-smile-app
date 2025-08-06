@@ -32,6 +32,24 @@ export default function DoctorPortalPage() {
     }
   }, [router]);
 
+  const handleFirebaseError = (error: any) => {
+    console.error("Firebase Error:", error);
+    let description = 'An unexpected error occurred.';
+    if (error.code === 'permission-denied') {
+        description = 'You have insufficient permissions to access the database. Please update your Firestore security rules in the Firebase console.';
+    }
+    toast({
+        variant: 'destructive',
+        title: 'Database Error',
+        description: description,
+        action: error.code === 'permission-denied' ? (
+            <a href="https://console.firebase.google.com/project/elegant-smile-r6jex/firestore/rules" target="_blank" rel="noopener noreferrer">
+                <Button variant="secondary">Fix Rules</Button>
+            </a>
+        ) : undefined,
+    });
+  };
+
   const handleAddCase = async (newCase: Omit<DentalCase, 'id'>) => {
     if (!isMounted) return;
     try {
@@ -50,12 +68,7 @@ export default function DoctorPortalPage() {
       setFormKey(Date.now());
 
     } catch (error) {
-       console.error("Failed to save case to Firestore", error);
-       toast({
-        variant: "destructive",
-        title: "Failed to add case",
-        description: "There was an error saving the case.",
-      });
+       handleFirebaseError(error);
     }
   };
 

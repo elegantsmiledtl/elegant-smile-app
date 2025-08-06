@@ -20,14 +20,31 @@ export default function DoctorPage() {
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
 
+  const handleFirebaseError = (error: any) => {
+    console.error("Firebase Error:", error);
+    let description = 'An unexpected error occurred.';
+    if (error.code === 'permission-denied') {
+        description = 'You have insufficient permissions to access the database. Please update your Firestore security rules in the Firebase console.';
+    }
+    toast({
+        variant: 'destructive',
+        title: 'Database Error',
+        description: description,
+        action: error.code === 'permission-denied' ? (
+            <a href="https://console.firebase.google.com/project/elegant-smile-r6jex/firestore/rules" target="_blank" rel="noopener noreferrer">
+                <Button variant="secondary">Fix Rules</Button>
+            </a>
+        ) : undefined,
+    });
+  };
+
   const fetchDoctorCases = async () => {
       if(dentistName) {
         try {
             const casesFromDb = await getCasesByDoctor(dentistName);
             setDoctorCases(casesFromDb);
         } catch (error) {
-            console.error(`Failed to fetch cases for ${dentistName}`, error);
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch cases for this doctor.' });
+            handleFirebaseError(error);
         }
       }
   };
@@ -43,8 +60,7 @@ export default function DoctorPage() {
         setDoctorCases(prevCases => prevCases.filter(c => c.id !== id));
         toast({ title: "Success", description: "Case deleted successfully." });
     } catch (error) {
-        console.error("Failed to delete case", error);
-        toast({ variant: 'destructive', title: "Error", description: "Failed to delete case." });
+        handleFirebaseError(error);
     }
   };
   
@@ -54,8 +70,7 @@ export default function DoctorPage() {
         setDoctorCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
         toast({ title: "Success", description: "Case updated successfully." });
     } catch (error) {
-        console.error("Failed to update case", error);
-        toast({ variant: 'destructive', title: "Error", description: "Failed to update case." });
+        handleFirebaseError(error);
     }
   };
 

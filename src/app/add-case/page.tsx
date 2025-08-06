@@ -22,13 +22,30 @@ function AddCasePageContent() {
 
   const source = searchParams.get('source') as 'Mobile' | 'Desktop' | null;
 
+  const handleFirebaseError = (error: any) => {
+    console.error("Firebase Error:", error);
+    let description = 'An unexpected error occurred.';
+    if (error.code === 'permission-denied') {
+        description = 'You have insufficient permissions to access the database. Please update your Firestore security rules in the Firebase console.';
+    }
+    toast({
+        variant: 'destructive',
+        title: 'Database Error',
+        description: description,
+        action: error.code === 'permission-denied' ? (
+            <a href="https://console.firebase.google.com/project/elegant-smile-r6jex/firestore/rules" target="_blank" rel="noopener noreferrer">
+                <Button variant="secondary">Fix Rules</Button>
+            </a>
+        ) : undefined,
+    });
+  };
+
   const fetchCases = async () => {
     try {
         const casesFromDb = await getCases();
         setCases(casesFromDb);
     } catch (error) {
-        console.error("Failed to fetch cases from Firestore", error);
-        toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch cases from the database.' });
+        handleFirebaseError(error);
     }
   };
   
@@ -56,12 +73,7 @@ function AddCasePageContent() {
       setKey(Date.now());
 
     } catch (error) {
-       console.error("Failed to save case to Firestore", error);
-       toast({
-        variant: "destructive",
-        title: "Failed to add case",
-        description: "There was an error saving the case.",
-      });
+       handleFirebaseError(error);
     }
   };
   
@@ -71,8 +83,7 @@ function AddCasePageContent() {
         setCases(prevCases => prevCases.filter(c => c.id !== id));
         toast({ title: "Success", description: "Case deleted successfully." });
     } catch (error) {
-        console.error("Failed to delete case", error);
-        toast({ variant: 'destructive', title: "Error", description: "Failed to delete case." });
+        handleFirebaseError(error);
     }
   };
   
@@ -82,8 +93,7 @@ function AddCasePageContent() {
         setCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
         toast({ title: "Success", description: "Case updated successfully." });
     } catch (error) {
-        console.error("Failed to update case", error);
-        toast({ variant: 'destructive', title: "Error", description: "Failed to update case." });
+        handleFirebaseError(error);
     }
   };
 
