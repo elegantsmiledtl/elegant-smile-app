@@ -14,9 +14,7 @@ export default function DoctorQrCodePage() {
   useEffect(() => {
     // Ensure this runs only on the client
     if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.pathname = '/login';
-      url.search = ''; // Clear any existing query params
+      const url = new URL('/login', window.location.origin);
       setLoginUrl(url.toString());
     }
   }, []);
