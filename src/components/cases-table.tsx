@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -34,7 +35,7 @@ import {
 } from "@/components/ui/dialog"
 import CaseEntryForm from './case-entry-form';
 import { useState } from 'react';
-
+import { format } from 'date-fns';
 
 interface CasesTableProps {
   cases: DentalCase[];
@@ -52,6 +53,13 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
     setIsEditDialogOpen(true);
   }
   
+  const formatDate = (timestamp: any) => {
+    if (timestamp && timestamp.toDate) {
+      return format(timestamp.toDate(), 'PPP p');
+    }
+    return 'N/A';
+  }
+
   if (cases.length === 0) {
     return (
       <div className="text-center text-muted-foreground p-8 border-2 border-dashed rounded-lg">
@@ -66,6 +74,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Created At</TableHead>
             <TableHead>Patient</TableHead>
             <TableHead>Dentist</TableHead>
             <TableHead>Tooth #(s)</TableHead>
@@ -80,6 +89,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
         <TableBody>
           {cases.map((c) => (
             <TableRow key={c.id}>
+              <TableCell>{formatDate(c.createdAt)}</TableCell>
               <TableCell className="font-medium">{c.patientName}</TableCell>
               <TableCell>
                 <Link href={`/doctor/${encodeURIComponent(c.dentistName)}`} className="text-primary hover:underline">

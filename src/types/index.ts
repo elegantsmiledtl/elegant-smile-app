@@ -1,3 +1,4 @@
+
 export type DentalCase = {
   id: string;
   patientName: string;
@@ -6,6 +7,7 @@ export type DentalCase = {
   prosthesisType: string;
   material: string;
   shade: string;
+  createdAt: any; // Using 'any' for Firestore ServerTimestamp flexibility
   notes?: string;
   source?: 'Mobile' | 'Desktop';
 };

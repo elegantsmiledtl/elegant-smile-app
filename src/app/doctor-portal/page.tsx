@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -50,10 +51,10 @@ export default function DoctorPortalPage() {
     });
   };
 
-  const handleAddCase = async (newCase: Omit<DentalCase, 'id'>) => {
+  const handleAddCase = async (newCase: Omit<DentalCase, 'id' | 'createdAt'>) => {
     if (!isMounted) return;
     try {
-      const caseWithSource: Omit<DentalCase, 'id'> = { 
+      const caseWithSource: Omit<DentalCase, 'id' | 'createdAt'> = { 
           ...newCase, 
           source: 'Desktop' // Assuming doctor portal is on desktop
       };

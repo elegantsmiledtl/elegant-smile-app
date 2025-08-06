@@ -1,3 +1,4 @@
+
 // src/lib/firebase.ts
 import { initializeApp } from 'firebase/app';
 import { 
@@ -9,7 +10,9 @@ import {
   updateDoc, 
   deleteDoc,
   query,
-  where
+  where,
+  orderBy,
+  serverTimestamp
 } from 'firebase/firestore';
 import type { DentalCase } from '@/types';
 
@@ -27,9 +30,10 @@ const db = getFirestore(app);
 
 const casesCollection = collection(db, 'dentalCases');
 
-// A function to get all cases
+// A function to get all cases, sorted by creation time
 export const getCases = async (): Promise<DentalCase[]> => {
-  const snapshot = await getDocs(casesCollection);
+  const q = query(casesCollection, orderBy('createdAt', 'desc'));
+  const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => {
     const data = doc.data();
     return {
@@ -39,9 +43,13 @@ export const getCases = async (): Promise<DentalCase[]> => {
   });
 };
 
-// A function to get cases for a specific doctor
+// A function to get cases for a specific doctor, sorted by creation time
 export const getCasesByDoctor = async (dentistName: string): Promise<DentalCase[]> => {
-  const q = query(casesCollection, where("dentistName", "==", dentistName));
+  const q = query(
+    casesCollection, 
+    where("dentistName", "==", dentistName),
+    orderBy('createdAt', 'desc')
+  );
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => {
     const data = doc.data();
@@ -53,9 +61,12 @@ export const getCasesByDoctor = async (dentistName: string): Promise<DentalCase[
 };
 
 
-// A function to add a new case
-export const addCase = async (newCase: Omit<DentalCase, 'id'>) => {
-  const docRef = await addDoc(casesCollection, newCase);
+// A function to add a new case with a server timestamp
+export const addCase = async (newCase: Omit<DentalCase, 'id' | 'createdAt'>) => {
+  const docRef = await addDoc(casesCollection, {
+    ...newCase,
+    createdAt: serverTimestamp()
+  });
   return docRef.id;
 };
 

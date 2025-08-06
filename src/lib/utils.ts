@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import type { DentalCase } from "@/types";
@@ -24,6 +25,12 @@ export function convertJsonToCsv(jsonData: DentalCase[]): string {
     const rows = jsonData.map(row => {
         return keys.map(key => {
             let cellData = row[key as keyof DentalCase];
+            
+            // Handle Firestore Timestamps
+            if (key === 'createdAt' && cellData && typeof (cellData as any).toDate === 'function') {
+                return (cellData as any).toDate().toISOString();
+            }
+
             if (cellData instanceof Date) {
                 return cellData.toISOString().split('T')[0];
             }
@@ -49,12 +56,18 @@ export function generateReport(cases: DentalCase[]): string {
   const totalCases = cases.length;
 
   const prosthesisTypes = cases.reduce((acc, c) => {
-    acc[c.prosthesisType] = (acc[c.prosthesisType] || 0) + 1;
+    const types = c.prosthesisType.split(',').map(t => t.trim()).filter(t => t);
+    types.forEach(type => {
+        acc[type] = (acc[type] || 0) + 1;
+    });
     return acc;
   }, {} as Record<string, number>);
 
   const materials = cases.reduce((acc, c) => {
-    acc[c.material] = (acc[c.material] || 0) + 1;
+    const mats = c.material.split(',').map(m => m.trim()).filter(m => m);
+    mats.forEach(material => {
+        acc[material] = (acc[material] || 0) + 1;
+    });
     return acc;
   }, {} as Record<string, number>);
 

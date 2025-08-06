@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,7 +38,7 @@ type CaseFormValues = z.infer<typeof formSchema>;
 interface CaseEntryFormProps {
   caseToEdit?: Partial<DentalCase>; // Allow partial for template
   onUpdate?: (updatedCase: DentalCase) => void;
-  onAddCase?: (newCase: Omit<DentalCase, 'id'>) => void;
+  onAddCase?: (newCase: Omit<DentalCase, 'id' | 'createdAt'>) => void;
 }
 
 const materialOptions = ["Zolid", "Zirconia", "Nickel Free", "N-Guard", "Implant", "MookUp"];
@@ -63,8 +64,8 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
   const isEditMode = !!caseToEdit?.id;
 
   function onSubmit(values: CaseFormValues) {
-    if (isEditMode && onUpdate && caseToEdit.id) {
-        onUpdate({ ...values, id: caseToEdit.id });
+    if (isEditMode && onUpdate && caseToEdit.id && caseToEdit.createdAt) {
+        onUpdate({ ...values, id: caseToEdit.id, createdAt: caseToEdit.createdAt });
         toast({
             title: 'Case Updated',
             description: `Case for ${values.patientName} has been successfully updated.`,

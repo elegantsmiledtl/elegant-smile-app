@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -54,7 +55,7 @@ function AddCasePageContent() {
     fetchCases();
   }, []);
 
-  const handleAddCase = async (newCase: Omit<DentalCase, 'id'>) => {
+  const handleAddCase = async (newCase: Omit<DentalCase, 'id' | 'createdAt'>) => {
     if (!isMounted) return;
     try {
       const caseWithSource = { 
