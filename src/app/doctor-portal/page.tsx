@@ -85,7 +85,6 @@ export default function DoctorPortalPage() {
   const caseTemplate: Partial<DentalCase> = {
     dentistName: doctorName,
     patientName: '',
-    dueDate: undefined,
     toothNumbers: '',
     prosthesisType: '',
     material: '',

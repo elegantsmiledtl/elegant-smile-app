@@ -35,7 +35,6 @@ export const getCases = async (): Promise<DentalCase[]> => {
     return {
       id: doc.id,
       ...data,
-      dueDate: (data.dueDate as any).toDate(), // Convert Firestore Timestamp to Date
     } as DentalCase;
   });
 };
@@ -49,7 +48,6 @@ export const getCasesByDoctor = async (dentistName: string): Promise<DentalCase[
     return {
       id: doc.id,
       ...data,
-      dueDate: (data.dueDate as any).toDate(),
     } as DentalCase;
   });
 };

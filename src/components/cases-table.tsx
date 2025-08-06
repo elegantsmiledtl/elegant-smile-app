@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Trash2, Edit, Smartphone, Monitor } from 'lucide-react';
 import type { DentalCase } from '@/types';
-import { format } from 'date-fns';
 
 import {
   AlertDialog,
@@ -69,7 +68,6 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
           <TableRow>
             <TableHead>Patient</TableHead>
             <TableHead>Dentist</TableHead>
-            <TableHead>Due Date</TableHead>
             <TableHead>Tooth #(s)</TableHead>
             <TableHead>Prosthesis</TableHead>
             <TableHead>Material</TableHead>
@@ -88,7 +86,6 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
                   {c.dentistName}
                 </Link>
               </TableCell>
-              <TableCell>{format(c.dueDate, 'MMM d, yyyy')}</TableCell>
               <TableCell>{c.toothNumbers}</TableCell>
               <TableCell>{c.prosthesisType}</TableCell>
               <TableCell>{c.material}</TableCell>
@@ -138,7 +135,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             </DialogHeader>
             {caseToEdit && (
                  <CaseEntryForm 
-                  caseToEdit={caseTo-edit} 
+                  caseToEdit={caseToEdit} 
                   onUpdate={(updatedCase) => {
                     onUpdateCase(updatedCase);
                     setIsEditDialogOpen(false);

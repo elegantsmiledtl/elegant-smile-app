@@ -63,11 +63,6 @@ export function generateReport(cases: DentalCase[]): string {
     return acc;
   }, {} as Record<string, number>);
   
-  const upcomingDueDates = cases
-    .filter(c => c.dueDate > new Date())
-    .sort((a,b) => a.dueDate.getTime() - b.dueDate.getTime())
-    .slice(0, 5);
-
 
   let report = `Elegant Smile Dental Lab - Summary Report\n`;
   report += `Generated on: ${new Date().toLocaleString()}\n`;
@@ -92,15 +87,6 @@ export function generateReport(cases: DentalCase[]): string {
     report += `${dentist}: ${count}\n`;
   });
   report += `\n`;
-  
-  report += `--- Upcoming Due Dates (Next 5) ---\n`;
-  if(upcomingDueDates.length > 0) {
-    upcomingDueDates.forEach(c => {
-        report += `${c.dueDate.toLocaleDateString()} - ${c.patientName} (${c.prosthesisType})\n`;
-    });
-  } else {
-    report += `No upcoming cases.\n`;
-  }
 
   report += `\n==================================================\n`;
   report += `End of Report\n`;

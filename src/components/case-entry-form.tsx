@@ -14,12 +14,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, PlusCircle, Save } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
+import { PlusCircle, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import type { DentalCase } from '@/types';
 import AiSuggester from './ai-suggester';
@@ -30,7 +26,6 @@ import { useRouter } from 'next/navigation';
 const formSchema = z.object({
   patientName: z.string().min(2, { message: 'Patient name must be at least 2 characters.' }),
   dentistName: z.string().min(2, { message: 'Dentist name must be at least 2 characters.' }),
-  dueDate: z.date({ required_error: 'A due date is required.' }),
   toothNumbers: z.string().min(1, { message: 'At least one tooth number is required.' }),
   prosthesisType: z.string().min(3, { message: 'Prosthesis type is required.' }),
   material: z.string().min(1, { message: 'At least one material must be selected.' }),
@@ -57,7 +52,6 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
     defaultValues: caseToEdit || {
       patientName: '',
       dentistName: '',
-      dueDate: undefined,
       toothNumbers: '',
       prosthesisType: '',
       material: '',
@@ -114,41 +108,6 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                   <FormControl>
                     <Input placeholder="Dr. Smith" {...field} disabled={!!caseToEdit?.dentistName} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="dueDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Due Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full pl-3 text-left font-normal',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date() || date < new Date('1900-01-01')}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
