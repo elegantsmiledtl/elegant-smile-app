@@ -9,7 +9,7 @@ import { useEffect, useState, Suspense } from 'react';
 import CasesTable from '@/components/cases-table';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Home } from 'lucide-react';
+import { Home, Smartphone } from 'lucide-react';
 
 function AddCasePageContent() {
   const router = useRouter();
@@ -96,32 +96,43 @@ function AddCasePageContent() {
   if (!isMounted) {
       return null;
   }
+  
+  const isMobileSource = source === 'Mobile';
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="bg-card border-b shadow-sm p-4">
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
-          <Button asChild variant="outline">
-            <Link href="/">
-                <Home className="mr-2" />
-                Back to Home
-            </Link>
-          </Button>
+           {isMobileSource ? (
+            <div className="flex items-center gap-2 text-primary">
+              <Smartphone />
+              <span className="font-semibold">Mobile Entry Mode</span>
+            </div>
+          ) : (
+            <Button asChild variant="outline">
+              <Link href="/">
+                  <Home className="mr-2" />
+                  Back to Home
+              </Link>
+            </Button>
+          )}
         </div>
       </header>
-      <main className="p-4 sm:p-6 lg:p-8 grid md:grid-cols-2 gap-8">
+      <main className={`p-4 sm:p-6 lg:p-8 ${isMobileSource ? 'grid grid-cols-1' : 'grid md:grid-cols-2 gap-8'}`}>
         <div>
             <CaseEntryForm key={key} onAddCase={handleAddCase} onUpdate={handleUpdate} />
         </div>
-        <div>
-            <h2 className="text-2xl font-bold mb-4">Saved Cases</h2>
-            <CasesTable 
-                cases={cases} 
-                onDeleteCase={handleDeleteCase}
-                onUpdateCase={handleUpdateCase}
-            />
-        </div>
+        {!isMobileSource && (
+            <div>
+                <h2 className="text-2xl font-bold mb-4">Saved Cases</h2>
+                <CasesTable 
+                    cases={cases} 
+                    onDeleteCase={handleDeleteCase}
+                    onUpdateCase={handleUpdateCase}
+                />
+            </div>
+        )}
       </main>
     </div>
   );

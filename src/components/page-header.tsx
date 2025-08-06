@@ -32,8 +32,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
   useEffect(() => {
     // Ensure this runs only on the client
     if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.pathname = '/add-case';
+      const url = new URL('/add-case', window.location.origin);
       url.searchParams.set('source', 'Mobile');
       setAddCaseUrl(url.toString());
     }
@@ -174,7 +173,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
-                <QrCode className="mr-2 h-4 w-4" /> QR Code
+                <QrCode className="mr-2 h-4 w-4" /> Add Case (Mobile)
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -182,14 +181,14 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
                 <DialogTitle>Add Case via QR Code</DialogTitle>
               </DialogHeader>
               <div className="flex items-center space-x-2 mt-4 justify-center">
-                {addCaseUrl && (
+                {addCaseUrl ? (
                     <div style={{ background: 'white', padding: '16px' }}>
                         <QRCode value={addCaseUrl} />
                     </div>
-                )}
+                ) : <p>Generating QR code...</p>}
               </div>
               <p className="text-center text-sm text-muted-foreground mt-2">
-                Scan this QR code with your phone to add a new case.
+                Scan this with a mobile device to add a new case.
               </p>
             </DialogContent>
           </Dialog>
