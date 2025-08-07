@@ -10,12 +10,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { QrCode, UserPlus } from 'lucide-react';
+import { QrCode, UserPlus, Users } from 'lucide-react';
 import { getCases, deleteCase, updateCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import AddDoctorForm from '@/components/add-doctor-form';
-import { addUser } from '../login/page';
+import { addUser, getUsers } from '../login/page';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 
 const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -41,6 +49,8 @@ export default function OwnerPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
   const [isAddDoctorDialogOpen, setIsAddDoctorDialogOpen] = useState(false);
+  const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
 
   const handleFirebaseError = (error: any) => {
     console.error("Firebase Error:", error);
@@ -72,6 +82,8 @@ export default function OwnerPage() {
   useEffect(() => {
     setIsMounted(true);
     fetchCases();
+    // Also fetch users on mount
+    setAllUsers(getUsers());
   }, []);
 
   const handleDeleteCase = async (id: string) => {
@@ -101,6 +113,7 @@ export default function OwnerPage() {
         email: `${values.name.toLowerCase().replace(/\s/g, '.')}@example.com`
     }
     addUser(newUser);
+    setAllUsers(getUsers()); // Refresh user list
     toast({
         title: "Doctor Added",
         description: `Dr. ${values.name} has been successfully added.`
@@ -130,6 +143,42 @@ export default function OwnerPage() {
                 All Recorded Cases
                 </CardTitle>
                 <div className="flex items-center gap-2">
+                    <Dialog open={isUsersDialogOpen} onOpenChange={setIsUsersDialogOpen}>
+                        <DialogTrigger asChild>
+                             <Button variant="outline">
+                                <Users className="mr-2" />
+                                Show All Users
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>All Registered Users</DialogTitle>
+                                 <DialogDescription>
+                                    This is a list of all users who can log in to the doctor portal.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="rounded-md border mt-4">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                        <TableHead>Name</TableHead>
+                                        <TableHead>Email</TableHead>
+                                        <TableHead>Password</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {allUsers.map((user, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell className="font-medium">{user.name}</TableCell>
+                                                <TableCell>{user.email}</TableCell>
+                                                <TableCell>{user.password}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                     <Dialog open={isAddDoctorDialogOpen} onOpenChange={setIsAddDoctorDialogOpen}>
                         <DialogTrigger asChild>
                             <Button variant="outline">

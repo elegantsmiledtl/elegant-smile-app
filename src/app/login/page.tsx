@@ -20,14 +20,19 @@ const DUMMY_USERS = [
 ];
 
 // Function to get users, allowing for runtime additions for the prototype
-const getUsers = () => {
+export const getUsers = () => {
     if (typeof window !== 'undefined') {
-        const storedUsers = sessionStorage.getItem('dummyUsers');
-        if (storedUsers) {
-            return JSON.parse(storedUsers);
+        try {
+            const storedUsers = sessionStorage.getItem('dummyUsers');
+            if (storedUsers) {
+                return JSON.parse(storedUsers);
+            }
+            sessionStorage.setItem('dummyUsers', JSON.stringify(DUMMY_USERS));
+            return DUMMY_USERS;
+        } catch (error) {
+            console.error("Could not access sessionStorage:", error);
+            return DUMMY_USERS;
         }
-        sessionStorage.setItem('dummyUsers', JSON.stringify(DUMMY_USERS));
-        return DUMMY_USERS;
     }
     return DUMMY_USERS;
 };
