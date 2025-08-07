@@ -18,7 +18,6 @@ import { Save } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
@@ -33,7 +32,6 @@ export default function AddDoctorForm({ onAddDoctor }: AddDoctorFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      email: '',
       password: '',
     },
   });
@@ -53,19 +51,6 @@ export default function AddDoctorForm({ onAddDoctor }: AddDoctorFormProps) {
               <FormLabel>Doctor Name</FormLabel>
               <FormControl>
                 <Input placeholder="Dr. Jane Doe" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="dr.jane@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

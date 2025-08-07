@@ -109,7 +109,7 @@ export default function OwnerPage() {
     }
   }
 
-  const handleAddDoctor = (values: { name: string; email: string; password: string }) => {
+  const handleAddDoctor = (values: { name: string; password: string }) => {
     addUser(values);
     toast({
       title: 'Doctor Added',
@@ -119,8 +119,8 @@ export default function OwnerPage() {
     setIsAddDoctorDialogOpen(false); // Close dialog
   };
 
-  const handleDeleteUser = (email: string) => {
-    deleteUser(email);
+  const handleDeleteUser = (name: string) => {
+    deleteUser(name);
      toast({
       title: 'Doctor Deleted',
       description: `The user has been deleted.`,
@@ -185,8 +185,7 @@ export default function OwnerPage() {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Email</TableHead>
+                                        <TableHead>User Name</TableHead>
                                         <TableHead>Password</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                         </TableRow>
@@ -195,10 +194,9 @@ export default function OwnerPage() {
                                         {allUsers.map((user, index) => (
                                             <TableRow key={index}>
                                                 <TableCell className="font-medium">{user.name}</TableCell>
-                                                <TableCell>{user.email}</TableCell>
                                                 <TableCell>{user.password}</TableCell>
                                                 <TableCell className="text-right">
-                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.email)}>
+                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.name)}>
                                                         <Trash2 className="h-4 w-4 text-destructive" />
                                                     </Button>
                                                 </TableCell>

@@ -12,11 +12,11 @@ import { useToast } from '@/hooks/use-toast';
 // In a real application, you would use Firebase Auth or another auth provider.
 // This is a simplified example.
 const DUMMY_USERS = [
-  { email: 'dr.smith@example.com', password: 'password123', name: 'Dr. Smith' },
-  { email: 'dr.jones@example.com', password: 'password123', name: 'Dr. Jones' },
-  { email: 'ahmad@example.com', password: '123456', name: 'ahmad' },
-  { email: 'dr.ibraheem.omar@example.com', password: 'drhema', name: 'Dr.Ibraheem Omar' },
-  { email: 'user@example.com', password: 'password', name: 'user' },
+  { name: 'Dr. Smith', password: 'password123' },
+  { name: 'Dr. Jones', password: 'password123' },
+  { name: 'ahmad', password: '123456' },
+  { name: 'Dr.Ibraheem Omar', password: 'drhema' },
+  { name: 'user', password: 'password' },
 ];
 
 const saveUsers = (users: any[]) => {
@@ -54,9 +54,9 @@ export const addUser = (newUser: any) => {
     return updatedUsers;
 }
 
-export const deleteUser = (email: string) => {
+export const deleteUser = (name: string) => {
     const users = getUsers();
-    const updatedUsers = users.filter((user: any) => user.email !== email);
+    const updatedUsers = users.filter((user: any) => user.name !== name);
     saveUsers(updatedUsers);
     return updatedUsers;
 }
@@ -97,7 +97,7 @@ function LoginPageContent() {
           description: `Welcome back, ${user.name}!`,
         });
         // In a real app, you'd store a session token. Here, we'll just redirect.
-        localStorage.setItem('loggedInUser', JSON.stringify({ name: user.name, email: user.email }));
+        localStorage.setItem('loggedInUser', JSON.stringify({ name: user.name }));
         router.push(`/doctor-portal`);
       } else {
         toast({
@@ -125,7 +125,7 @@ function LoginPageContent() {
         <CardContent>
           <form onSubmit={handleLogin} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">User Name</Label>
               <Input
                 id="name"
                 type="text"
