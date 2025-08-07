@@ -18,6 +18,20 @@ const DUMMY_USERS = [
   { email: 'dr.ibraheem.omar@example.com', password: 'drhema', name: 'Dr.Ibraheem Omar' },
 ];
 
+// Function to get users, allowing for runtime additions for the prototype
+const getUsers = () => {
+    if (typeof window !== 'undefined') {
+        const storedUsers = sessionStorage.getItem('dummyUsers');
+        if (storedUsers) {
+            return JSON.parse(storedUsers);
+        }
+        sessionStorage.setItem('dummyUsers', JSON.stringify(DUMMY_USERS));
+        return DUMMY_USERS;
+    }
+    return DUMMY_USERS;
+};
+
+
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -25,8 +39,10 @@ function LoginPageContent() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState(DUMMY_USERS);
 
   useEffect(() => {
+    setUsers(getUsers());
     const prefilledName = searchParams.get('name');
     if (prefilledName) {
       setName(decodeURIComponent(prefilledName));
@@ -38,7 +54,7 @@ function LoginPageContent() {
     setIsLoading(true);
 
     setTimeout(() => {
-      const user = DUMMY_USERS.find(
+      const user = users.find(
         (u) => u.name === name && u.password === password
       );
 
@@ -115,3 +131,11 @@ export default function LoginPage() {
         </Suspense>
     )
 }
+
+export const addUser = (newUser: any) => {
+    if (typeof window !== 'undefined') {
+        const currentUsers = getUsers();
+        const updatedUsers = [...currentUsers, newUser];
+        sessionStorage.setItem('dummyUsers', JSON.stringify(updatedUsers));
+    }
+};
