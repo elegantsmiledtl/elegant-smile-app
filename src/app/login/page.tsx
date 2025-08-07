@@ -17,7 +17,6 @@ const DUMMY_USERS = [
   { name: 'ahmad', password: '123456' },
   { name: 'Dr.Ibraheem Omar', password: 'drhema' },
   { name: 'user', password: 'password' },
-  { name: 'Dr.Mohammad Matar', password: 'drmatar' },
 ];
 
 const saveUsers = (users: any[]) => {
