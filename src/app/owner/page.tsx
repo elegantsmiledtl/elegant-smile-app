@@ -6,7 +6,7 @@ import type { DentalCase } from '@/types';
 import PageHeader from '@/components/page-header';
 import CasesTable from '@/components/cases-table';
 import Dashboard from '@/components/dashboard';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Label } from '@/components/ui/label';
 
 
 const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -43,6 +44,9 @@ const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const APP_PASSWORD = "Ahmad0903"; 
+const AUTH_KEY = "owner_app_auth";
+
 export default function OwnerPage() {
   const [cases, setCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
@@ -51,6 +55,39 @@ export default function OwnerPage() {
   const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
   const [isAddDoctorDialogOpen, setIsAddDoctorDialogOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<any[]>([]);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setIsMounted(true);
+    // Check if user is already authenticated in localStorage
+    if (localStorage.getItem(AUTH_KEY) === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+        if (typeof window !== 'undefined') {
+            fetchCases();
+            fetchUsers();
+        }
+    }
+  }, [isAuthenticated]);
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === APP_PASSWORD) {
+      localStorage.setItem(AUTH_KEY, 'true');
+      setIsAuthenticated(true);
+      setError('');
+    } else {
+      setError('Incorrect password. Please try again.');
+    }
+  };
+
 
   const handleFirebaseError = (error: any) => {
     console.error("Firebase Error:", error);
@@ -82,14 +119,6 @@ export default function OwnerPage() {
   const fetchUsers = () => {
     setAllUsers(getUsers());
   }
-
-  useEffect(() => {
-    setIsMounted(true);
-    if (typeof window !== 'undefined') {
-        fetchCases();
-        fetchUsers();
-    }
-  }, []);
 
   const handleDeleteCase = async (id: string) => {
     try {
@@ -137,6 +166,42 @@ export default function OwnerPage() {
 
   if (!isMounted) {
     return null; // or a loading spinner
+  }
+  
+  if (!isAuthenticated) {
+    return (
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+            <div className="absolute top-8 left-8">
+                <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
+            </div>
+            <Card className="w-full max-w-sm shadow-2xl">
+                <CardHeader>
+                    <CardTitle className="text-2xl">Owner Dashboard Access</CardTitle>
+                    <CardDescription>
+                        Please enter the password to continue.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handlePasswordSubmit} className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                required
+                                value={passwordInput}
+                                onChange={(e) => setPasswordInput(e.target.value)}
+                            />
+                        </div>
+                        {error && <p className="text-sm text-destructive">{error}</p>}
+                        <Button type="submit" className="w-full">
+                            Enter
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    );
   }
 
   return (
