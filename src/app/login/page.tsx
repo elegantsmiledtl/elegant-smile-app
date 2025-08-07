@@ -16,6 +16,7 @@ const DUMMY_USERS = [
   { email: 'dr.jones@example.com', password: 'password123', name: 'Dr. Jones' },
   { email: 'ahmad@example.com', password: '123456', name: 'ahmad' },
   { email: 'dr.ibraheem.omar@example.com', password: 'drhema', name: 'Dr.Ibraheem Omar' },
+  { email: 'user@example.com', password: 'password', name: 'user' },
 ];
 
 // Function to get users, allowing for runtime additions for the prototype
