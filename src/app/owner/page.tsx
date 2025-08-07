@@ -257,6 +257,12 @@ export default function OwnerPage() {
                         Generate QR for Dr.Ibraheem
                       </Link>
                     </Button>
+                    <Button asChild variant="outline">
+                      <Link href="/owner/qr-matar">
+                        <QrCode className="mr-2" />
+                        Generate QR for Dr.Matar
+                      </Link>
+                    </Button>
                 </div>
                 <div className="w-1/3">
                     <Input 
