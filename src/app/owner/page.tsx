@@ -10,12 +10,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { QrCode, UserPlus, Users } from 'lucide-react';
+import { QrCode, Users } from 'lucide-react';
 import { getCases, deleteCase, updateCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import AddDoctorForm from '@/components/add-doctor-form';
-import { addUser, getUsers } from '../login/page';
+import { getUsers } from '../login/page';
 import {
   Table,
   TableBody,
@@ -48,7 +47,6 @@ export default function OwnerPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
-  const [isAddDoctorDialogOpen, setIsAddDoctorDialogOpen] = useState(false);
   const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<any[]>([]);
 
@@ -104,21 +102,6 @@ export default function OwnerPage() {
     } catch (error) {
         handleFirebaseError(error);
     }
-  }
-
-  const handleAddDoctor = (values: any) => {
-    const newUser = {
-        name: values.name,
-        password: values.password,
-        email: `${values.name.toLowerCase().replace(/\s/g, '.')}@example.com`
-    }
-    addUser(newUser);
-    setAllUsers(getUsers()); // Refresh user list
-    toast({
-        title: "Doctor Added",
-        description: `Dr. ${values.name} has been successfully added.`
-    });
-    setIsAddDoctorDialogOpen(false);
   }
 
   const filteredCases = cases.filter(c => 
@@ -177,20 +160,6 @@ export default function OwnerPage() {
                                     </TableBody>
                                 </Table>
                             </div>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog open={isAddDoctorDialogOpen} onOpenChange={setIsAddDoctorDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="outline">
-                                <UserPlus className="mr-2" />
-                                Add New Doctor
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Add New Doctor User</DialogTitle>
-                            </DialogHeader>
-                            <AddDoctorForm onAddDoctor={handleAddDoctor} />
                         </DialogContent>
                     </Dialog>
                      <Button asChild variant="outline">

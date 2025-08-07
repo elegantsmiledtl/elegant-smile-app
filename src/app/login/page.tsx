@@ -137,11 +137,3 @@ export default function LoginPage() {
         </Suspense>
     )
 }
-
-export const addUser = (newUser: any) => {
-    if (typeof window !== 'undefined') {
-        const currentUsers = getUsers();
-        const updatedUsers = [...currentUsers, newUser];
-        sessionStorage.setItem('dummyUsers', JSON.stringify(updatedUsers));
-    }
-};
