@@ -6,7 +6,7 @@ import type { DentalCase } from '@/types';
 import PageHeader from '@/components/page-header';
 import CasesTable from '@/components/cases-table';
 import Dashboard from '@/components/dashboard';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { getCases, addCase, updateCase, deleteCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
