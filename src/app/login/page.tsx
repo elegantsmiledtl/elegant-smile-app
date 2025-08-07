@@ -48,13 +48,6 @@ export const getUsers = () => {
     return DUMMY_USERS;
 };
 
-export const addUser = (newUser: any) => {
-    const users = getUsers();
-    const updatedUsers = [...users, newUser];
-    saveUsers(updatedUsers);
-    return updatedUsers;
-}
-
 export const deleteUser = (name: string) => {
     const users = getUsers();
     const updatedUsers = users.filter((user: any) => user.name !== name);

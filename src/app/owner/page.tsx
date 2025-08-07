@@ -10,12 +10,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { QrCode, Users, PlusCircle, Trash2 } from 'lucide-react';
+import { QrCode, Users, Trash2 } from 'lucide-react';
 import { getCases, deleteCase, updateCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogClose } from '@/components/ui/dialog';
-import { getUsers, addUser, deleteUser } from '../login/page';
-import AddDoctorForm from '@/components/add-doctor-form';
+import { getUsers, deleteUser } from '../login/page';
 import {
   Table,
   TableBody,
@@ -53,7 +52,6 @@ export default function OwnerPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
   const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
-  const [isAddDoctorDialogOpen, setIsAddDoctorDialogOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<any[]>([]);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -140,16 +138,6 @@ export default function OwnerPage() {
     }
   }
 
-  const handleAddDoctor = (values: { name: string; password: string }) => {
-    addUser(values);
-    toast({
-      title: 'Doctor Added',
-      description: `User for ${values.name} has been created.`,
-    });
-    fetchUsers(); // Refresh user list
-    setIsAddDoctorDialogOpen(false); // Close dialog
-  };
-
   const handleDeleteUser = (name: string) => {
     deleteUser(name);
      toast({
@@ -217,23 +205,6 @@ export default function OwnerPage() {
                 All Recorded Cases
                 </CardTitle>
                 <div className="flex items-center gap-2">
-                    <Dialog open={isAddDoctorDialogOpen} onOpenChange={setIsAddDoctorDialogOpen}>
-                        <DialogTrigger asChild>
-                             <Button variant="outline">
-                                <PlusCircle className="mr-2" />
-                                Add New Doctor
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Add New Doctor User</DialogTitle>
-                                 <DialogDescription>
-                                    Create a new login for a doctor to access the portal.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <AddDoctorForm onAddDoctor={handleAddDoctor} />
-                        </DialogContent>
-                    </Dialog>
                     <Dialog open={isUsersDialogOpen} onOpenChange={setIsUsersDialogOpen}>
                         <DialogTrigger asChild>
                              <Button variant="outline">
