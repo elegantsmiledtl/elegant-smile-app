@@ -10,11 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { QrCode, Users } from 'lucide-react';
+import { QrCode, Users, PlusCircle, Trash2 } from 'lucide-react';
 import { getCases, deleteCase, updateCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { getUsers } from '../login/page';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogClose } from '@/components/ui/dialog';
+import { getUsers, addUser, deleteUser } from '../login/page';
+import AddDoctorForm from '@/components/add-doctor-form';
 import {
   Table,
   TableBody,
@@ -48,6 +49,7 @@ export default function OwnerPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
   const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
+  const [isAddDoctorDialogOpen, setIsAddDoctorDialogOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<any[]>([]);
 
   const handleFirebaseError = (error: any) => {
@@ -77,11 +79,14 @@ export default function OwnerPage() {
     }
   };
 
+  const fetchUsers = () => {
+    setAllUsers(getUsers());
+  }
+
   useEffect(() => {
     setIsMounted(true);
     fetchCases();
-    // Also fetch users on mount
-    setAllUsers(getUsers());
+    fetchUsers();
   }, []);
 
   const handleDeleteCase = async (id: string) => {
@@ -103,6 +108,25 @@ export default function OwnerPage() {
         handleFirebaseError(error);
     }
   }
+
+  const handleAddDoctor = (values: { name: string; email: string; password: string }) => {
+    addUser(values);
+    toast({
+      title: 'Doctor Added',
+      description: `User for ${values.name} has been created.`,
+    });
+    fetchUsers(); // Refresh user list
+    setIsAddDoctorDialogOpen(false); // Close dialog
+  };
+
+  const handleDeleteUser = (email: string) => {
+    deleteUser(email);
+     toast({
+      title: 'Doctor Deleted',
+      description: `The user has been deleted.`,
+    });
+    fetchUsers(); // Refresh user list
+  };
 
   const filteredCases = cases.filter(c => 
     c.dentistName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -126,11 +150,28 @@ export default function OwnerPage() {
                 All Recorded Cases
                 </CardTitle>
                 <div className="flex items-center gap-2">
+                    <Dialog open={isAddDoctorDialogOpen} onOpenChange={setIsAddDoctorDialogOpen}>
+                        <DialogTrigger asChild>
+                             <Button variant="outline">
+                                <PlusCircle className="mr-2" />
+                                Add New Doctor
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Add New Doctor User</DialogTitle>
+                                 <DialogDescription>
+                                    Create a new login for a doctor to access the portal.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <AddDoctorForm onAddDoctor={handleAddDoctor} />
+                        </DialogContent>
+                    </Dialog>
                     <Dialog open={isUsersDialogOpen} onOpenChange={setIsUsersDialogOpen}>
                         <DialogTrigger asChild>
                              <Button variant="outline">
                                 <Users className="mr-2" />
-                                Show All Users
+                                Manage Users
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -147,6 +188,7 @@ export default function OwnerPage() {
                                         <TableHead>Name</TableHead>
                                         <TableHead>Email</TableHead>
                                         <TableHead>Password</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -155,6 +197,11 @@ export default function OwnerPage() {
                                                 <TableCell className="font-medium">{user.name}</TableCell>
                                                 <TableCell>{user.email}</TableCell>
                                                 <TableCell>{user.password}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.email)}>
+                                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

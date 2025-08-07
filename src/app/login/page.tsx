@@ -19,6 +19,16 @@ const DUMMY_USERS = [
   { email: 'user@example.com', password: 'password', name: 'user' },
 ];
 
+const saveUsers = (users: any[]) => {
+    if (typeof window !== 'undefined') {
+        try {
+            sessionStorage.setItem('dummyUsers', JSON.stringify(users));
+        } catch (error) {
+            console.error("Could not access sessionStorage:", error);
+        }
+    }
+}
+
 // Function to get users, allowing for runtime additions for the prototype
 export const getUsers = () => {
     if (typeof window !== 'undefined') {
@@ -27,7 +37,7 @@ export const getUsers = () => {
             if (storedUsers) {
                 return JSON.parse(storedUsers);
             }
-            sessionStorage.setItem('dummyUsers', JSON.stringify(DUMMY_USERS));
+            saveUsers(DUMMY_USERS);
             return DUMMY_USERS;
         } catch (error) {
             console.error("Could not access sessionStorage:", error);
@@ -37,6 +47,20 @@ export const getUsers = () => {
     return DUMMY_USERS;
 };
 
+export const addUser = (newUser: any) => {
+    const users = getUsers();
+    const updatedUsers = [...users, newUser];
+    saveUsers(updatedUsers);
+    return updatedUsers;
+}
+
+export const deleteUser = (email: string) => {
+    const users = getUsers();
+    const updatedUsers = users.filter((user: any) => user.email !== email);
+    saveUsers(updatedUsers);
+    return updatedUsers;
+}
+
 
 function LoginPageContent() {
   const router = useRouter();
@@ -45,7 +69,7 @@ function LoginPageContent() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState(DUMMY_USERS);
+  const [users, setUsers] = useState(getUsers());
 
   useEffect(() => {
     setUsers(getUsers());
@@ -60,8 +84,11 @@ function LoginPageContent() {
     setIsLoading(true);
 
     setTimeout(() => {
-      const user = users.find(
-        (u) => u.name === name && u.password === password
+      // Re-fetch users right before login attempt
+      const currentUsers = getUsers();
+      setUsers(currentUsers);
+      const user = currentUsers.find(
+        (u: any) => u.name === name && u.password === password
       );
 
       if (user) {
