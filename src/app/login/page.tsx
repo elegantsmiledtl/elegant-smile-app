@@ -22,9 +22,9 @@ const DUMMY_USERS = [
 const saveUsers = (users: any[]) => {
     if (typeof window !== 'undefined') {
         try {
-            sessionStorage.setItem('dummyUsers', JSON.stringify(users));
+            localStorage.setItem('dummyUsers', JSON.stringify(users));
         } catch (error) {
-            console.error("Could not access sessionStorage:", error);
+            console.error("Could not access localStorage:", error);
         }
     }
 }
@@ -33,14 +33,14 @@ const saveUsers = (users: any[]) => {
 export const getUsers = () => {
     if (typeof window !== 'undefined') {
         try {
-            const storedUsers = sessionStorage.getItem('dummyUsers');
+            const storedUsers = localStorage.getItem('dummyUsers');
             if (storedUsers) {
                 return JSON.parse(storedUsers);
             }
             saveUsers(DUMMY_USERS);
             return DUMMY_USERS;
         } catch (error) {
-            console.error("Could not access sessionStorage:", error);
+            console.error("Could not access localStorage:", error);
             return DUMMY_USERS;
         }
     }

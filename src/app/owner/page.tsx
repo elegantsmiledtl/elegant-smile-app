@@ -85,8 +85,10 @@ export default function OwnerPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    fetchCases();
-    fetchUsers();
+    if (typeof window !== 'undefined') {
+        fetchCases();
+        fetchUsers();
+    }
   }, []);
 
   const handleDeleteCase = async (id: string) => {
