@@ -8,53 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-
-// In a real application, you would use Firebase Auth or another auth provider.
-// This is a simplified example.
-const DUMMY_USERS = [
-  { name: 'Dr. Smith', password: 'password123' },
-  { name: 'Dr. Jones', password: 'password123' },
-  { name: 'ahmad', password: '123456' },
-  { name: 'Dr.Ibraheem Omar', password: 'drhema' },
-  { name: 'user', password: 'password' },
-  { name: 'Dr.Matar', password: 'drmatar' },
-];
-
-const saveUsers = (users: any[]) => {
-    if (typeof window !== 'undefined') {
-        try {
-            localStorage.setItem('dummyUsers', JSON.stringify(users));
-        } catch (error) {
-            console.error("Could not access localStorage:", error);
-        }
-    }
-}
-
-// Function to get users, allowing for runtime additions for the prototype
-export const getUsers = () => {
-    if (typeof window !== 'undefined') {
-        try {
-            const storedUsers = localStorage.getItem('dummyUsers');
-            if (storedUsers) {
-                return JSON.parse(storedUsers);
-            }
-            saveUsers(DUMMY_USERS);
-            return DUMMY_USERS;
-        } catch (error) {
-            console.error("Could not access localStorage:", error);
-            return DUMMY_USERS;
-        }
-    }
-    return DUMMY_USERS;
-};
-
-export const deleteUser = (name: string) => {
-    const users = getUsers();
-    const updatedUsers = users.filter((user: any) => user.name !== name);
-    saveUsers(updatedUsers);
-    return updatedUsers;
-}
-
+import { verifyUser } from '@/lib/firebase';
 
 function LoginPageContent() {
   const router = useRouter();
@@ -63,35 +17,27 @@ function LoginPageContent() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState(getUsers());
 
   useEffect(() => {
-    setUsers(getUsers());
     const prefilledName = searchParams.get('name');
     if (prefilledName) {
       setName(decodeURIComponent(prefilledName));
     }
   }, [searchParams]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      // Re-fetch users right before login attempt
-      const currentUsers = getUsers();
-      setUsers(currentUsers);
-      const user = currentUsers.find(
-        (u: any) => u.name === name && u.password === password
-      );
+    try {
+      const isValidUser = await verifyUser(name, password);
 
-      if (user) {
+      if (isValidUser) {
         toast({
           title: 'Login Successful',
-          description: `Welcome back, ${user.name}!`,
+          description: `Welcome back, ${name}!`,
         });
-        // In a real app, you'd store a session token. Here, we'll just redirect.
-        localStorage.setItem('loggedInUser', JSON.stringify({ name: user.name }));
+        localStorage.setItem('loggedInUser', JSON.stringify({ name: name }));
         router.push(`/doctor-portal`);
       } else {
         toast({
@@ -99,9 +45,17 @@ function LoginPageContent() {
           title: 'Login Failed',
           description: 'Invalid name or password.',
         });
-        setIsLoading(false);
       }
-    }, 1000);
+    } catch (error) {
+       toast({
+          variant: 'destructive',
+          title: 'Login Error',
+          description: 'An error occurred during login. Please try again.',
+        });
+       console.error("Login error:", error);
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (

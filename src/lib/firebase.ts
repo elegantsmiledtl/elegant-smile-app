@@ -29,6 +29,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const casesCollection = collection(db, 'dentalCases');
+const usersCollection = collection(db, 'users');
 
 // A function to get all cases, sorted by creation time
 export const getCases = async (): Promise<DentalCase[]> => {
@@ -80,4 +81,38 @@ export const updateCase = async (caseId: string, updatedCase: Partial<DentalCase
 export const deleteCase = async (caseId: string) => {
   const caseDoc = doc(db, 'dentalCases', caseId);
   await deleteDoc(caseDoc);
+};
+
+// --- User Management Functions ---
+
+// In a real app, you would have more secure user management, this is for prototyping.
+export const getUsers = async () => {
+    const snapshot = await getDocs(usersCollection);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const addUser = async (user: { name: string; password?: string }) => {
+    // Check if user already exists
+    const q = query(usersCollection, where("name", "==", user.name));
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+        throw new Error("User with this name already exists.");
+    }
+    await addDoc(usersCollection, user);
+};
+
+export const deleteUser = async (userId: string) => {
+    const userDoc = doc(db, 'users', userId);
+    await deleteDoc(userDoc);
+};
+
+export const verifyUser = async (name: string, password?: string) => {
+    let q;
+    if (password) {
+      q = query(usersCollection, where("name", "==", name), where("password", "==", password));
+    } else {
+      q = query(usersCollection, where("name", "==", name));
+    }
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
 };

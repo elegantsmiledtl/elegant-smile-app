@@ -10,11 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { QrCode, Users, Trash2 } from 'lucide-react';
-import { getCases, deleteCase, updateCase } from '@/lib/firebase';
+import { QrCode, Users, Trash2, PlusCircle } from 'lucide-react';
+import { getCases, deleteCase, updateCase, getUsers, deleteUser, addUser } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogClose } from '@/components/ui/dialog';
-import { getUsers, deleteUser } from '../login/page';
 import {
   Table,
   TableBody,
@@ -46,12 +45,82 @@ const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const APP_PASSWORD = "Ahmad0903"; 
 const AUTH_KEY = "owner_app_auth";
 
+// A simple form component for adding a doctor
+function AddDoctorForm({ onDoctorAdded }: { onDoctorAdded: () => void }) {
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
+    const { toast } = useToast();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!name || !password) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Please provide both user name and password.',
+            });
+            return;
+        }
+        try {
+            await addUser({ name, password });
+            toast({
+                title: 'Success',
+                description: `Doctor "${name}" has been added.`,
+            });
+            setName('');
+            setPassword('');
+            onDoctorAdded();
+        } catch (error) {
+            console.error(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to add doctor. They may already exist.',
+            });
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                    User Name
+                </Label>
+                <Input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="col-span-3"
+                    placeholder="e.g. Dr. Smith"
+                />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password-add" className="text-right">
+                    Password
+                </Label>
+                <Input
+                    id="password-add"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="col-span-3"
+                />
+            </div>
+            <DialogClose asChild>
+                <Button type="submit">Add Doctor</Button>
+            </DialogClose>
+        </form>
+    );
+}
+
+
 export default function OwnerPage() {
   const [cases, setCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
   const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
+  const [isAddDoctorDialogOpen, setIsAddDoctorDialogOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<any[]>([]);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -60,7 +129,6 @@ export default function OwnerPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Check if user is already authenticated in localStorage
     if (localStorage.getItem(AUTH_KEY) === 'true') {
       setIsAuthenticated(true);
     }
@@ -90,14 +158,14 @@ export default function OwnerPage() {
   const handleFirebaseError = (error: any) => {
     console.error("Firebase Error:", error);
     let description = 'An unexpected error occurred.';
-    if (error.code === 'permission-denied') {
+    if (error.code === 'permission-denied' || error.message.includes('permission-denied')) {
         description = 'You have insufficient permissions to access the database. Please update your Firestore security rules in the Firebase console.';
     }
     toast({
         variant: 'destructive',
         title: 'Database Error',
         description: description,
-        action: error.code === 'permission-denied' ? (
+        action: description.includes('insufficient permissions') ? (
             <a href="https://console.firebase.google.com/project/elegant-smile-r6jex/firestore/rules" target="_blank" rel="noopener noreferrer">
                 <Button variant="secondary">Fix Rules</Button>
             </a>
@@ -114,8 +182,18 @@ export default function OwnerPage() {
     }
   };
 
-  const fetchUsers = () => {
-    setAllUsers(getUsers());
+  const fetchUsers = async () => {
+    try {
+        const usersFromDb = await getUsers();
+        setAllUsers(usersFromDb);
+    } catch(error) {
+        handleFirebaseError(error);
+    }
+  }
+
+  const handleDoctorAdded = () => {
+      fetchUsers();
+      setIsAddDoctorDialogOpen(false);
   }
 
   const handleDeleteCase = async (id: string) => {
@@ -138,13 +216,17 @@ export default function OwnerPage() {
     }
   }
 
-  const handleDeleteUser = (name: string) => {
-    deleteUser(name);
-     toast({
-      title: 'Doctor Deleted',
-      description: `The user has been deleted.`,
-    });
-    fetchUsers(); // Refresh user list
+  const handleDeleteUser = async (userId: string) => {
+    try {
+        await deleteUser(userId);
+        toast({
+            title: 'Doctor Deleted',
+            description: `The user has been deleted.`,
+        });
+        fetchUsers();
+    } catch(error) {
+        handleFirebaseError(error);
+    }
   };
 
   const filteredCases = cases.filter(c => 
@@ -153,7 +235,7 @@ export default function OwnerPage() {
   );
 
   if (!isMounted) {
-    return null; // or a loading spinner
+    return null;
   }
   
   if (!isAuthenticated) {
@@ -229,12 +311,12 @@ export default function OwnerPage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {allUsers.map((user, index) => (
-                                            <TableRow key={index}>
+                                        {allUsers.map((user) => (
+                                            <TableRow key={user.id}>
                                                 <TableCell className="font-medium">{user.name}</TableCell>
                                                 <TableCell>{user.password}</TableCell>
                                                 <TableCell className="text-right">
-                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.name)}>
+                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.id)}>
                                                         <Trash2 className="h-4 w-4 text-destructive" />
                                                     </Button>
                                                 </TableCell>
@@ -243,6 +325,23 @@ export default function OwnerPage() {
                                     </TableBody>
                                 </Table>
                             </div>
+                             <Dialog open={isAddDoctorDialogOpen} onOpenChange={setIsAddDoctorDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button className="mt-4">
+                                        <PlusCircle className="mr-2" />
+                                        Add New Doctor
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Add a New Doctor</DialogTitle>
+                                        <DialogDescription>
+                                            Create a new user account for the doctor portal.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <AddDoctorForm onDoctorAdded={handleDoctorAdded} />
+                                </DialogContent>
+                            </Dialog>
                         </DialogContent>
                     </Dialog>
                      <Button asChild variant="outline">
