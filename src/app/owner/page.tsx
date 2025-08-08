@@ -23,6 +23,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Label } from '@/components/ui/label';
+import Logo from '@/components/logo';
 
 
 const ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -242,7 +243,7 @@ export default function OwnerPage() {
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
             <div className="absolute top-8 left-8">
-                <h1 className="text-2xl font-bold font-headline text-foreground">Elegant Smile</h1>
+                <Logo />
             </div>
             <Card className="w-full max-w-sm shadow-2xl">
                 <CardHeader>

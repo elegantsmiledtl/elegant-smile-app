@@ -10,6 +10,7 @@ import { Home } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import Logo from '@/components/logo';
 
 export default function DoctorIbraheemQrCodePage() {
   const [loginUrl, setLoginUrl] = useState('');
@@ -44,7 +45,7 @@ export default function DoctorIbraheemQrCodePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
        <div className="absolute top-8 left-8">
-         <h1 className="text-2xl font-bold font-headline text-foreground">Elegant Smile</h1>
+         <Logo />
       </div>
        <div className="absolute top-8 right-8">
          <Button asChild variant="outline">
