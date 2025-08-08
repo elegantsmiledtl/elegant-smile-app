@@ -94,7 +94,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                 <FormItem>
                   <FormLabel className="font-bold">Patient Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
