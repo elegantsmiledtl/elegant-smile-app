@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { QrCode, Users, Trash2, PlusCircle } from 'lucide-react';
+import { QrCode, Users, Trash2, PlusCircle, User } from 'lucide-react';
 import { getCases, deleteCase, updateCase, getUsers, deleteUser, addUser } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogClose } from '@/components/ui/dialog';
@@ -287,6 +287,12 @@ export default function OwnerPage() {
                 All Recorded Cases
                 </CardTitle>
                 <div className="flex items-center gap-2">
+                    <Button asChild variant="outline">
+                      <Link href="/my-cases">
+                        <User className="mr-2" />
+                        My Cases
+                      </Link>
+                    </Button>
                     <Dialog open={isUsersDialogOpen} onOpenChange={setIsUsersDialogOpen}>
                         <DialogTrigger asChild>
                              <Button variant="outline">

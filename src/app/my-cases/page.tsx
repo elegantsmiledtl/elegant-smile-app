@@ -7,13 +7,12 @@ import type { DentalCase } from '@/types';
 import CaseEntryForm from '@/components/case-entry-form';
 import CasesTable from '@/components/cases-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Stethoscope, Home, LogOut, PlusCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Stethoscope, LogOut, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCasesByDoctor, addCase, updateCase, deleteCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
-export default function DoctorPortalPage() {
+export default function MyCasesPage() {
   const router = useRouter();
   const [dentistName, setDentistName] = useState('');
   const [doctorCases, setDoctorCases] = useState<DentalCase[]>([]);
@@ -141,7 +140,7 @@ export default function DoctorPortalPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <PlusCircle className="w-6 h-6 text-primary" />
-                        My Recorded Cases
+                        My Cases
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
