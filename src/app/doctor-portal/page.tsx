@@ -127,14 +127,26 @@ export default function DoctorPortalPage() {
                 </div>
             </div>
       </header>
-      <main className="p-4 sm:p-6 lg:p-8 flex justify-center">
-        <div className="w-full max-w-2xl">
+      <main className="p-4 sm:p-6 lg:p-8 space-y-6">
+        <div className="w-full max-w-4xl mx-auto">
             <CaseEntryForm 
                 key={key} 
                 onAddCase={handleAddCase} 
                 caseToEdit={{ dentistName: dentistName }} // Pre-fill dentist name
             />
         </div>
+         <Card className="shadow-lg max-w-7xl mx-auto">
+            <CardHeader>
+                <CardTitle>My Recorded Cases</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <CasesTable 
+                    cases={doctorCases} 
+                    onDeleteCase={handleDeleteCase} 
+                    onUpdateCase={handleUpdateCase} 
+                />
+            </CardContent>
+        </Card>
       </main>
     </div>
   );
