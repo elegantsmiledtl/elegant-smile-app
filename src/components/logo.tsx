@@ -6,11 +6,11 @@ const Logo = ({ className }: { className?: string }) => {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {/* 
-        Once you add your logo to the /public folder (e.g., /public/logo.png), 
-        change the src below to "/logo.png" 
+        This is now pointing to /logo.png. 
+        Please upload your logo image to the /public folder and name it 'logo.png'.
       */}
       <Image 
-        src="https://placehold.co/40x40.png" 
+        src="/logo.png" 
         alt="Elegant Smile Logo" 
         width={40} 
         height={40}
