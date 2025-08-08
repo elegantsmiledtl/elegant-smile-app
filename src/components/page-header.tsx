@@ -146,7 +146,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
     <header className="bg-card border-b shadow-sm p-4">
       <Toaster />
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
+        <h1 className="text-2xl font-bold font-headline text-foreground">Elegant Smile</h1>
         <div className="flex items-center gap-2">
             <Button asChild size="sm">
                 <Link href="/owner">

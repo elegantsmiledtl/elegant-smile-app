@@ -94,7 +94,7 @@ export default function DoctorPortalPage() {
     <div className="min-h-screen bg-background text-foreground">
         <header className="bg-card border-b shadow-sm p-4">
             <div className="container mx-auto flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
+                <h1 className="text-2xl font-bold font-headline text-foreground">Elegant Smile</h1>
                 <div className="flex items-center gap-4">
                      <h2 className="text-xl font-bold text-primary flex items-center gap-2">
                         <Stethoscope className="w-6 h-6" />
