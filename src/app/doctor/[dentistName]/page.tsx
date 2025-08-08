@@ -83,7 +83,7 @@ export default function DoctorPage() {
                         <Stethoscope className="w-6 h-6" />
                         Cases for {dentistName}
                     </h2>
-                     {isViewingOwnPage && (
+                     {isViewingOwnPage ? (
                        <>
                         <Button asChild>
                             <Link href="/doctor-portal">
@@ -96,6 +96,13 @@ export default function DoctorPage() {
                             Logout
                         </Button>
                        </>
+                    ) : (
+                        <Button asChild>
+                            <Link href={`/login?name=${encodeURIComponent(dentistName)}`}>
+                                <User className="mr-2" />
+                                My Cases
+                            </Link>
+                        </Button>
                     )}
                 </div>
             </div>
