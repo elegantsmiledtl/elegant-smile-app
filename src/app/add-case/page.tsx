@@ -6,11 +6,10 @@ import CaseEntryForm from '@/components/case-entry-form';
 import type { DentalCase } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState, Suspense } from 'react';
-import CasesTable from '@/components/cases-table';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Home, Smartphone } from 'lucide-react';
-import { getCases, addCase, updateCase, deleteCase } from '@/lib/firebase';
+import { addCase } from '@/lib/firebase';
 
 function AddCasePageContent() {
   const router = useRouter();
@@ -18,40 +17,11 @@ function AddCasePageContent() {
   const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
   const [key, setKey] = useState(Date.now()); // Add key state to re-mount the form
-  const [cases, setCases] = useState<DentalCase[]>([]);
-
+  
   const source = searchParams.get('source') as 'Mobile' | 'Desktop' | null;
 
-  const handleFirebaseError = (error: any) => {
-    console.error("Firebase Error:", error);
-    let description = 'An unexpected error occurred.';
-    if (error.code === 'permission-denied') {
-        description = 'You have insufficient permissions to access the database. Please update your Firestore security rules in the Firebase console.';
-    }
-    toast({
-        variant: 'destructive',
-        title: 'Database Error',
-        description: description,
-        action: error.code === 'permission-denied' ? (
-            <a href="https://console.firebase.google.com/project/elegant-smile-r6jex/firestore/rules" target="_blank" rel="noopener noreferrer">
-                <Button variant="secondary">Fix Rules</Button>
-            </a>
-        ) : undefined,
-    });
-  };
-
-  const fetchCases = async () => {
-    try {
-        const casesFromDb = await getCases();
-        setCases(casesFromDb);
-    } catch (error) {
-        handleFirebaseError(error);
-    }
-  };
-  
   useEffect(() => {
     setIsMounted(true);
-    fetchCases();
   }, []);
 
   const handleAddCase = async (newCase: Omit<DentalCase, 'id' | 'createdAt'>) => {
@@ -62,7 +32,6 @@ function AddCasePageContent() {
           source: source === 'Mobile' ? 'Mobile' : 'Desktop'
       };
       await addCase(caseWithSource);
-      await fetchCases(); // Re-fetch all cases to update the table
       
       toast({
         title: 'GOT IT',
@@ -73,30 +42,15 @@ function AddCasePageContent() {
       setKey(Date.now());
 
     } catch (error) {
-       handleFirebaseError(error);
+       console.error("Firebase Error:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Database Error',
+            description: 'Could not add the case. Please check your connection and permissions.',
+        });
     }
   };
   
-  const handleDeleteCase = async (id: string) => {
-    try {
-        await deleteCase(id);
-        setCases(prevCases => prevCases.filter(c => c.id !== id));
-        toast({ title: "Success", description: "Case deleted successfully." });
-    } catch (error) {
-        handleFirebaseError(error);
-    }
-  };
-  
-  const handleUpdateCase = async (updatedCase: DentalCase) => {
-    try {
-        await updateCase(updatedCase.id, updatedCase);
-        setCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
-        toast({ title: "Success", description: "Case updated successfully." });
-    } catch (error) {
-        handleFirebaseError(error);
-    }
-  };
-
   const handleUpdate = () => {
     // This page is only for adding, so we redirect home if an update is triggered.
     router.push('/');
@@ -128,20 +82,10 @@ function AddCasePageContent() {
           )}
         </div>
       </header>
-      <main className={`p-4 sm:p-6 lg:p-8 ${isMobileSource ? 'grid grid-cols-1' : 'grid md:grid-cols-2 gap-8'}`}>
-        <div>
+      <main className="p-4 sm:p-6 lg:p-8 flex justify-center">
+        <div className="w-full max-w-2xl">
             <CaseEntryForm key={key} onAddCase={handleAddCase} onUpdate={handleUpdate} />
         </div>
-        {!isMobileSource && (
-            <div>
-                <h2 className="text-2xl font-bold mb-4">Saved Cases</h2>
-                <CasesTable 
-                    cases={cases} 
-                    onDeleteCase={handleDeleteCase}
-                    onUpdateCase={handleUpdateCase}
-                />
-            </div>
-        )}
       </main>
     </div>
   );
