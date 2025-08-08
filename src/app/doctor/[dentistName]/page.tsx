@@ -90,11 +90,6 @@ export default function DoctorPage() {
             </div>
       </header>
       <main className="p-4 sm:p-6 lg:p-8">
-        <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold text-primary flex items-center gap-3">
-                My Recorded Cases
-            </h2>
-        </div>
         <Card className="shadow-lg">
           <CardContent className="pt-6">
             <CasesTable 
