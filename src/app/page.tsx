@@ -12,7 +12,6 @@ import { getCases, addCase, updateCase, deleteCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import Logo from '@/components/logo';
 
 const TOOTH_ICON = (
   <svg
@@ -129,7 +128,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
             <div className="absolute top-8 left-8">
-                <Logo />
+                 <h1 className="text-3xl font-bold font-headline text-primary">Elegant Smile</h1>
             </div>
             <Card className="w-full max-w-sm shadow-2xl">
                 <CardHeader>

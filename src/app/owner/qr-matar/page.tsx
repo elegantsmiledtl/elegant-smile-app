@@ -10,7 +10,6 @@ import { Home } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import Logo from '@/components/logo';
 
 export default function DoctorMatarQrCodePage() {
   const [loginUrl, setLoginUrl] = useState('');
@@ -45,7 +44,7 @@ export default function DoctorMatarQrCodePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
        <div className="absolute top-8 left-8">
-         <Logo />
+         <h1 className="text-3xl font-bold font-headline text-primary">Elegant Smile</h1>
       </div>
        <div className="absolute top-8 right-8">
          <Button asChild variant="outline">
