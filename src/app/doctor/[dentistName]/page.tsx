@@ -94,12 +94,6 @@ export default function DoctorPage() {
             <h2 className="text-3xl font-bold text-primary flex items-center gap-3">
                 My Recorded Cases
             </h2>
-            <Button asChild variant="outline">
-                <Link href="/">
-                    <Home className="mr-2" />
-                    Back to Main Dashboard
-                </Link>
-            </Button>
         </div>
         <Card className="shadow-lg">
           <CardContent className="pt-6">

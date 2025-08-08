@@ -125,12 +125,6 @@ export default function DoctorPortalPage() {
                         <LogOut className="mr-2" />
                         Logout
                     </Button>
-                     <Button asChild variant="outline">
-                        <Link href="/">
-                            <Home className="mr-2" />
-                            Main Dashboard
-                        </Link>
-                    </Button>
                 </div>
             </div>
       </header>
