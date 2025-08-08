@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import type { DentalCase } from '@/types';
 import CasesTable from '@/components/cases-table';
 import { Card, CardContent } from '@/components/ui/card';
-import { Stethoscope, Home, LogOut } from 'lucide-react';
+import { Stethoscope, Home, LogOut, User } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { getCasesByDoctor } from '@/lib/firebase';
@@ -18,6 +18,7 @@ export default function DoctorPage() {
   const dentistName = params.dentistName ? decodeURIComponent(params.dentistName as string) : '';
   const [doctorCases, setDoctorCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState<{name: string} | null>(null);
   const { toast } = useToast();
 
   const handleFirebaseError = (error: any) => {
@@ -54,23 +55,22 @@ export default function DoctorPage() {
     const savedUser = localStorage.getItem('loggedInUser');
     if (savedUser) {
         const user = JSON.parse(savedUser);
-        if(user.name !== dentistName) {
-             router.push('/login');
-        }
-    } else {
-        router.push('/login');
+        setLoggedInUser(user);
     }
     fetchDoctorCases();
   }, [dentistName, router]);
   
   const handleLogout = () => {
     localStorage.removeItem('loggedInUser');
+    setLoggedInUser(null);
     router.push('/login');
   };
 
   if (!isMounted) {
     return null; // Or a loading spinner
   }
+
+  const isViewingOwnPage = loggedInUser?.name === dentistName;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -80,12 +80,22 @@ export default function DoctorPage() {
                 <div className="flex items-center gap-4">
                      <h2 className="text-xl font-bold text-primary flex items-center gap-2">
                         <Stethoscope className="w-6 h-6" />
-                        Welcome, {dentistName}
+                        Cases for {dentistName}
                     </h2>
-                    <Button onClick={handleLogout} variant="outline">
-                        <LogOut className="mr-2" />
-                        Logout
-                    </Button>
+                     {isViewingOwnPage && (
+                       <>
+                        <Button asChild>
+                            <Link href="/doctor-portal">
+                                <User className="mr-2" />
+                                My Cases
+                            </Link>
+                        </Button>
+                        <Button onClick={handleLogout} variant="outline">
+                            <LogOut className="mr-2" />
+                            Logout
+                        </Button>
+                       </>
+                    )}
                 </div>
             </div>
       </header>
