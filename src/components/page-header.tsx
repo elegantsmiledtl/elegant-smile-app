@@ -17,6 +17,7 @@ import {
 import QRCode from "react-qr-code";
 import Link from 'next/link';
 import { Toaster } from '@/components/ui/toaster';
+import Logo from './logo';
 
 
 interface PageHeaderProps {
@@ -146,7 +147,7 @@ export default function PageHeader({ cases, setCases }: PageHeaderProps) {
     <header className="bg-card border-b shadow-sm p-4">
       <Toaster />
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold font-headline text-primary">Elegant Smile</h1>
+        <Logo />
         <div className="flex items-center gap-2">
             <Button asChild size="sm">
                 <Link href="/owner">
