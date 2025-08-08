@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 interface ToothProps {
   number: number;
@@ -18,7 +19,7 @@ const Tooth: React.FC<ToothProps> = ({ number, isSelected, onClick }) => (
     type="button"
     onClick={() => onClick(number)}
     className={cn(
-      'h-10 w-10 rounded-full border flex items-center justify-center transition-colors',
+      'h-10 w-10 rounded-full border flex items-center justify-center transition-colors flex-shrink-0',
       isSelected
         ? 'bg-primary text-primary-foreground'
         : 'bg-card hover:bg-accent'
@@ -77,17 +78,20 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
           className="cursor-pointer"
         />
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-4">
-        <div className="space-y-4">
-            <div className="flex justify-between">
-                <div className="flex gap-1">{upperRightQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
-                <div className="flex gap-1">{upperLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+      <PopoverContent className="w-[380px] sm:w-auto p-4">
+        <ScrollArea className="w-full whitespace-nowrap">
+            <div className="space-y-4 inline-block">
+                <div className="flex justify-between gap-2">
+                    <div className="flex gap-1">{upperRightQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+                    <div className="flex gap-1">{upperLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+                </div>
+                <div className="flex justify-between gap-2">
+                    <div className="flex gap-1">{lowerRightQuadrant.slice().reverse().map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+                    <div className="flex gap-1">{lowerLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+                </div>
             </div>
-             <div className="flex justify-between">
-                <div className="flex gap-1">{lowerRightQuadrant.reverse().map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
-                <div className="flex gap-1">{lowerLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
-            </div>
-        </div>
+            <ScrollBar orientation="horizontal" />
+        </ScrollArea>
         <div className="flex justify-end gap-2 mt-4">
             <Button variant="ghost" size="sm" onClick={handleClear}>Clear</Button>
             <Button size="sm" onClick={() => setIsOpen(false)}>Done</Button>
