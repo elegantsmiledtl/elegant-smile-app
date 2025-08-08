@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import type { DentalCase } from '@/types';
 import CasesTable from '@/components/cases-table';
 import { Card, CardContent } from '@/components/ui/card';
-import { Stethoscope, Home, LogOut, User } from 'lucide-react';
+import { Stethoscope, User } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { getCasesByDoctor } from '@/lib/firebase';
@@ -14,11 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function DoctorPage() {
   const params = useParams();
-  const router = useRouter();
   const dentistName = params.dentistName ? decodeURIComponent(params.dentistName as string) : '';
   const [doctorCases, setDoctorCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<{name: string} | null>(null);
   const { toast } = useToast();
 
   const handleFirebaseError = (error: any) => {
@@ -52,26 +50,13 @@ export default function DoctorPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const savedUser = localStorage.getItem('loggedInUser');
-    if (savedUser) {
-        const user = JSON.parse(savedUser);
-        setLoggedInUser(user);
-    }
     fetchDoctorCases();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dentistName]);
   
-  const handleLogout = () => {
-    localStorage.removeItem('loggedInUser');
-    setLoggedInUser(null);
-    router.push('/login');
-  };
-
   if (!isMounted) {
     return null; // Or a loading spinner
   }
-
-  const isViewingOwnPage = loggedInUser?.name === dentistName;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -83,27 +68,12 @@ export default function DoctorPage() {
                         <Stethoscope className="w-6 h-6" />
                         Cases for {dentistName}
                     </h2>
-                     {isViewingOwnPage ? (
-                       <>
-                        <Button asChild>
-                            <Link href="/doctor-portal">
-                                <User className="mr-2" />
-                                My Cases
-                            </Link>
-                        </Button>
-                        <Button onClick={handleLogout} variant="outline">
-                            <LogOut className="mr-2" />
-                            Logout
-                        </Button>
-                       </>
-                    ) : (
-                        <Button asChild>
-                            <Link href={`/login?name=${encodeURIComponent(dentistName)}`}>
-                                <User className="mr-2" />
-                                My Cases
-                            </Link>
-                        </Button>
-                    )}
+                    <Button asChild>
+                        <Link href={`/login?name=${encodeURIComponent(dentistName)}`}>
+                            <User className="mr-2" />
+                            My Cases
+                        </Link>
+                    </Button>
                 </div>
             </div>
       </header>
