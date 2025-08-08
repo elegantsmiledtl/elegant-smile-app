@@ -50,14 +50,14 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
 
   const form = useForm<CaseFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: caseToEdit || {
-      patientName: '',
-      dentistName: '',
-      toothNumbers: '',
-      prosthesisType: '',
-      material: '',
-      shade: '',
-      notes: '',
+    defaultValues: {
+      patientName: caseToEdit?.patientName || '',
+      dentistName: caseToEdit?.dentistName || '',
+      toothNumbers: caseToEdit?.toothNumbers || '',
+      prosthesisType: caseToEdit?.prosthesisType || '',
+      material: caseToEdit?.material || '',
+      shade: caseToEdit?.shade || '',
+      notes: caseToEdit?.notes || '',
     },
   });
   
