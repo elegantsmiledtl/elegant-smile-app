@@ -1,20 +1,20 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import type { DentalCase } from '@/types';
 import CasesTable from '@/components/cases-table';
-import PageHeader from '@/components/page-header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Stethoscope } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Stethoscope, Home, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home } from 'lucide-react';
-import { getCasesByDoctor, deleteCase, updateCase } from '@/lib/firebase';
+import { getCasesByDoctor } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DoctorPage() {
   const params = useParams();
+  const router = useRouter();
   const dentistName = params.dentistName ? decodeURIComponent(params.dentistName as string) : '';
   const [doctorCases, setDoctorCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
@@ -51,27 +51,21 @@ export default function DoctorPage() {
 
   useEffect(() => {
     setIsMounted(true);
+    const savedUser = localStorage.getItem('loggedInUser');
+    if (savedUser) {
+        const user = JSON.parse(savedUser);
+        if(user.name !== dentistName) {
+             router.push('/login');
+        }
+    } else {
+        router.push('/login');
+    }
     fetchDoctorCases();
-  }, [dentistName]);
-
-  const handleDeleteCase = async (id: string) => {
-    try {
-        await deleteCase(id);
-        setDoctorCases(prevCases => prevCases.filter(c => c.id !== id));
-        toast({ title: "Success", description: "Case deleted successfully." });
-    } catch (error) {
-        handleFirebaseError(error);
-    }
-  };
+  }, [dentistName, router]);
   
-  const handleUpdateCase = async (updatedCase: DentalCase) => {
-    try {
-        await updateCase(updatedCase.id, updatedCase);
-        setDoctorCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
-        toast({ title: "Success", description: "Case updated successfully." });
-    } catch (error) {
-        handleFirebaseError(error);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('loggedInUser');
+    router.push('/login');
   };
 
   if (!isMounted) {
@@ -80,26 +74,37 @@ export default function DoctorPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PageHeader cases={doctorCases} setCases={setDoctorCases} />
+        <header className="bg-card border-b shadow-sm p-4">
+            <div className="container mx-auto flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-foreground">Elegant Smile</h1>
+                <div className="flex items-center gap-4">
+                     <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                        <Stethoscope className="w-6 h-6" />
+                        Welcome, {dentistName}
+                    </h2>
+                    <Button onClick={handleLogout} variant="outline">
+                        <LogOut className="mr-2" />
+                        Logout
+                    </Button>
+                </div>
+            </div>
+      </header>
       <main className="p-4 sm:p-6 lg:p-8">
         <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold text-primary flex items-center gap-3">
-                <Stethoscope className="w-8 h-8" />
-                Cases for {dentistName}
+                My Recorded Cases
             </h2>
             <Button asChild variant="outline">
                 <Link href="/">
                     <Home className="mr-2" />
-                    Back to Home
+                    Back to Main Dashboard
                 </Link>
             </Button>
         </div>
         <Card className="shadow-lg">
           <CardContent className="pt-6">
             <CasesTable 
-              cases={doctorCases} 
-              onDeleteCase={handleDeleteCase} 
-              onUpdateCase={handleUpdateCase}
+              cases={doctorCases}
             />
           </CardContent>
         </Card>

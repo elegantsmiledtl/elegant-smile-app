@@ -38,7 +38,7 @@ function LoginPageContent() {
           description: `Welcome back, ${name}!`,
         });
         localStorage.setItem('loggedInUser', JSON.stringify({ name: name }));
-        router.push(`/doctor-portal`);
+        router.push(`/doctor/${encodeURIComponent(name)}`);
       } else {
         toast({
           variant: 'destructive',

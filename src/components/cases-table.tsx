@@ -31,7 +31,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import CaseEntryForm from './case-entry-form';
 import { useState } from 'react';
@@ -39,8 +38,8 @@ import { format } from 'date-fns';
 
 interface CasesTableProps {
   cases: DentalCase[];
-  onDeleteCase: (id: string) => void;
-  onUpdateCase: (updatedCase: DentalCase) => void;
+  onDeleteCase?: (id: string) => void;
+  onUpdateCase?: (updatedCase: DentalCase) => void;
 }
 
 export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesTableProps) {
@@ -68,6 +67,8 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
       </div>
     );
   }
+  
+  const showActions = onDeleteCase && onUpdateCase;
 
   return (
     <div className="rounded-md border">
@@ -83,7 +84,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             <TableHead>Shade</TableHead>
             <TableHead>Source</TableHead>
             <TableHead>Notes</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            {showActions && <TableHead className="text-right">Actions</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -107,33 +108,35 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
                 </div>
               </TableCell>
               <TableCell className="max-w-[200px] truncate">{c.notes}</TableCell>
-              <TableCell className="text-right">
-                <Button variant="ghost" size="icon" onClick={() => handleEditClick(c)}>
-                    <Edit className="h-4 w-4" />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the case
-                        for {c.patientName}.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => onDeleteCase(c.id)} className="bg-destructive hover:bg-destructive/90">
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </TableCell>
+              {showActions && (
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon" onClick={() => handleEditClick(c)}>
+                      <Edit className="h-4 w-4" />
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the case
+                          for {c.patientName}.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onDeleteCase(c.id)} className="bg-destructive hover:bg-destructive/90">
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
@@ -143,7 +146,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             <DialogHeader>
               <DialogTitle>Edit Case</DialogTitle>
             </DialogHeader>
-            {caseToEdit && (
+            {caseToEdit && onUpdateCase && (
                  <CaseEntryForm 
                   caseToEdit={caseToEdit} 
                   onUpdate={(updatedCase) => {
