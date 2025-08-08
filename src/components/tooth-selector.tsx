@@ -78,7 +78,7 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
           className="cursor-pointer"
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[380px] sm:w-auto p-4">
+      <PopoverContent className="w-[380px] sm:w-[710px] p-4 flex justify-center">
         <ScrollArea className="w-full whitespace-nowrap">
             <div className="space-y-4 inline-block">
                 <div className="flex justify-between gap-2">
@@ -86,13 +86,13 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     <div className="flex gap-1">{upperLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                 </div>
                 <div className="flex justify-between gap-2">
-                    <div className="flex gap-1">{lowerRightQuadrant.slice().reverse().map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+                    <div className="flex gap-1">{lowerRightQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                     <div className="flex gap-1">{lowerLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                 </div>
             </div>
             <ScrollBar orientation="horizontal" />
         </ScrollArea>
-        <div className="flex justify-end gap-2 mt-4">
+        <div className="absolute bottom-4 right-4 flex justify-end gap-2 mt-4">
             <Button variant="ghost" size="sm" onClick={handleClear}>Clear</Button>
             <Button size="sm" onClick={() => setIsOpen(false)}>Done</Button>
         </div>
