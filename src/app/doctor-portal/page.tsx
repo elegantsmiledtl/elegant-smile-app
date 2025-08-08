@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { getCasesByDoctor, addCase, updateCase, deleteCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
-export default function MyCasesPage() {
+export default function DoctorPortalPage() {
   const router = useRouter();
   const [dentistName, setDentistName] = useState('');
   const [doctorCases, setDoctorCases] = useState<DentalCase[]>([]);
@@ -140,7 +140,7 @@ export default function MyCasesPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <PlusCircle className="w-6 h-6 text-primary" />
-                        My Cases
+                        My Recorded Cases
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
