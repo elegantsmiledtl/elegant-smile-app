@@ -92,7 +92,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
               name="patientName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Patient Name</FormLabel>
+                  <FormLabel className="font-bold">Patient Name</FormLabel>
                   <FormControl>
                     <Input placeholder="John Doe" {...field} />
                   </FormControl>
@@ -105,7 +105,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
               name="dentistName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Dentist Name</FormLabel>
+                  <FormLabel className="font-bold">Dentist Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Dr. Smith" {...field} disabled={!!caseToEdit?.dentistName} />
                   </FormControl>
@@ -118,7 +118,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
               name="toothNumbers"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tooth Number(s)</FormLabel>
+                  <FormLabel className="font-bold">Tooth Number(s)</FormLabel>
                   <FormControl>
                     <ToothSelector value={field.value} onChange={field.onChange} />
                   </FormControl>
@@ -131,7 +131,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
               name="prosthesisType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Prosthesis Type</FormLabel>
+                  <FormLabel className="font-bold">Prosthesis Type</FormLabel>
                    <div className="grid grid-cols-2 gap-2">
                     {prosthesisTypeOptions.map((item) => (
                       <FormField
@@ -179,7 +179,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
               name="material"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Material</FormLabel>
+                  <FormLabel className="font-bold">Material</FormLabel>
                   <div className="grid grid-cols-2 gap-2">
                     {materialOptions.map((item) => (
                       <FormField
@@ -227,7 +227,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
               name="shade"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Shade</FormLabel>
+                  <FormLabel className="font-bold">Shade</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., A2, B1" {...field} />
                   </FormControl>
@@ -240,7 +240,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes / Instructions</FormLabel>
+                  <FormLabel className="font-bold">Notes / Instructions</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Add any specific instructions..." {...field} />
                   </FormControl>
