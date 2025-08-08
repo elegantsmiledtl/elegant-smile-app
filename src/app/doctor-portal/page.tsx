@@ -9,7 +9,7 @@ import CasesTable from '@/components/cases-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Stethoscope, LogOut, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getCasesByDoctor, addCase, updateCase, deleteCase } from '@/lib/firebase';
+import { getCasesByDoctor, addCase } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DoctorPortalPage() {
@@ -80,26 +80,6 @@ export default function DoctorPortalPage() {
       handleFirebaseError(error);
     }
   };
-
-  const handleDeleteCase = async (id: string) => {
-    try {
-        await deleteCase(id);
-        setDoctorCases(prevCases => prevCases.filter(c => c.id !== id));
-        toast({ title: "Success", description: "Case deleted successfully." });
-    } catch (error) {
-        handleFirebaseError(error);
-    }
-  };
-  
-  const handleUpdateCase = async (updatedCase: DentalCase) => {
-    try {
-        await updateCase(updatedCase.id, updatedCase);
-        setDoctorCases(prevCases => prevCases.map(c => c.id === updatedCase.id ? updatedCase : c));
-        toast({ title: "Success", description: "Case updated successfully." });
-    } catch (error) {
-        handleFirebaseError(error);
-    }
-  };
   
   const handleLogout = () => {
     localStorage.removeItem('loggedInUser');
@@ -141,9 +121,7 @@ export default function DoctorPortalPage() {
             </CardHeader>
             <CardContent>
                 <CasesTable 
-                    cases={doctorCases} 
-                    onDeleteCase={handleDeleteCase} 
-                    onUpdateCase={handleUpdateCase} 
+                    cases={doctorCases}
                 />
             </CardContent>
         </Card>
