@@ -16,7 +16,6 @@ const Logo = ({ className }: { className?: string }) => {
         height={40}
         data-ai-hint="logo"
       />
-      <h1 className="text-2xl font-bold font-headline text-foreground">Elegant Smile</h1>
     </div>
   );
 };
