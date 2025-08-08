@@ -92,7 +92,6 @@ function AddDoctorForm({ onDoctorAdded }: { onDoctorAdded: () => void }) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="col-span-3"
-                    placeholder="e.g. Dr. Smith"
                 />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">

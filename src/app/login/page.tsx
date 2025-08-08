@@ -78,7 +78,6 @@ function LoginPageContent() {
               <Input
                 id="name"
                 type="text"
-                placeholder="e.g. Dr. Smith"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}

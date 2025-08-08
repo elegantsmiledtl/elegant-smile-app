@@ -107,7 +107,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                 <FormItem>
                   <FormLabel className="font-bold">Dentist Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Dr. Smith" {...field} disabled={!!caseToEdit?.dentistName} />
+                    <Input {...field} disabled={!!caseToEdit?.dentistName} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
