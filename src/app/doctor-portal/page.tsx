@@ -5,17 +5,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { DentalCase } from '@/types';
 import CaseEntryForm from '@/components/case-entry-form';
-import CasesTable from '@/components/cases-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Stethoscope, LogOut, PlusCircle } from 'lucide-react';
+import { Stethoscope, LogOut, PlusCircle, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getCasesByDoctor, addCase } from '@/lib/firebase';
+import { addCase, getCasesByDoctor } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 export default function DoctorPortalPage() {
   const router = useRouter();
   const [dentistName, setDentistName] = useState('');
-  const [doctorCases, setDoctorCases] = useState<DentalCase[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [key, setKey] = useState(Date.now()); // For resetting the form
   const { toast } = useToast();
@@ -30,13 +29,6 @@ export default function DoctorPortalPage() {
         router.push('/login');
     }
   }, [router]);
-  
-  useEffect(() => {
-    if (dentistName) {
-        fetchDoctorCases();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dentistName]);
 
   const handleFirebaseError = (error: any) => {
     console.error("Firebase Error:", error);
@@ -55,22 +47,21 @@ export default function DoctorPortalPage() {
         ) : undefined,
     });
   };
-
-  const fetchDoctorCases = async () => {
+  
+  const fetchCasesForToast = async () => {
       if(dentistName) {
         try {
-            const casesFromDb = await getCasesByDoctor(dentistName);
-            setDoctorCases(casesFromDb);
+            await getCasesByDoctor(dentistName);
         } catch (error) {
             handleFirebaseError(error);
         }
       }
   };
 
+
   const handleAddCase = async (newCase: Omit<DentalCase, 'id' | 'createdAt'>) => {
     try {
       await addCase({ ...newCase, dentistName });
-      await fetchDoctorCases();
       toast({
         title: 'Case Added',
         description: `Case for ${newCase.patientName} has been successfully added.`,
@@ -115,16 +106,14 @@ export default function DoctorPortalPage() {
                 caseToEdit={{ dentistName: dentistName }} // Pre-fill dentist name
             />
         </div>
-         <Card className="shadow-lg max-w-7xl mx-auto">
-            <CardHeader>
-                <CardTitle>My Recorded Cases</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <CasesTable 
-                    cases={doctorCases}
-                />
-            </CardContent>
-        </Card>
+        <div className="w-full max-w-4xl mx-auto flex justify-center">
+             <Button asChild>
+                <Link href={`/doctor/${encodeURIComponent(dentistName)}`}>
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    View My Recorded Cases
+                </Link>
+            </Button>
+        </div>
       </main>
     </div>
   );
