@@ -33,7 +33,7 @@ const Tooth: React.FC<ToothProps> = ({ number, isSelected, onClick }) => (
 const upperRightQuadrant = [18, 17, 16, 15, 14, 13, 12, 11];
 const upperLeftQuadrant = [21, 22, 23, 24, 25, 26, 27, 28];
 const lowerLeftQuadrant = [31, 32, 33, 34, 35, 36, 37, 38];
-const lowerRightQuadrant = [41, 42, 43, 44, 45, 46, 47, 48];
+const lowerRightQuadrant = [48, 47, 46, 45, 44, 43, 42, 41];
 
 
 interface ToothSelectorProps {
@@ -78,7 +78,7 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
           className="cursor-pointer"
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[380px] sm:w-[710px] p-4 flex justify-center">
+      <PopoverContent className="w-[380px] sm:w-[710px] p-4">
         <ScrollArea className="w-full whitespace-nowrap">
             <div className="space-y-4 inline-block">
                 <div className="flex justify-between gap-2">
@@ -86,13 +86,13 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     <div className="flex gap-1">{upperLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                 </div>
                 <div className="flex justify-between gap-2">
-                    <div className="flex gap-1">{lowerRightQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+                    <div className="flex flex-row-reverse gap-1">{lowerRightQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                     <div className="flex gap-1">{lowerLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                 </div>
             </div>
             <ScrollBar orientation="horizontal" />
         </ScrollArea>
-        <div className="absolute bottom-4 right-4 flex justify-end gap-2 mt-4">
+        <div className="flex justify-end gap-2 mt-4">
             <Button variant="ghost" size="sm" onClick={handleClear}>Clear</Button>
             <Button size="sm" onClick={() => setIsOpen(false)}>Done</Button>
         </div>
