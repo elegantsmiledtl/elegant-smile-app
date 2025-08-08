@@ -58,7 +58,8 @@ export default function DoctorPage() {
         setLoggedInUser(user);
     }
     fetchDoctorCases();
-  }, [dentistName, router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dentistName]);
   
   const handleLogout = () => {
     localStorage.removeItem('loggedInUser');
