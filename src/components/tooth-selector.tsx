@@ -33,7 +33,7 @@ const Tooth: React.FC<ToothProps> = ({ number, isSelected, onClick }) => (
 const upperRightQuadrant = [18, 17, 16, 15, 14, 13, 12, 11];
 const upperLeftQuadrant = [21, 22, 23, 24, 25, 26, 27, 28];
 const lowerLeftQuadrant = [31, 32, 33, 34, 35, 36, 37, 38];
-const lowerRightQuadrant = [48, 47, 46, 45, 44, 43, 42, 41];
+const lowerRightQuadrant = [41, 42, 43, 44, 45, 46, 47, 48];
 
 
 interface ToothSelectorProps {
@@ -86,7 +86,7 @@ export default function ToothSelector({ value, onChange }: ToothSelectorProps) {
                     <div className="flex gap-1">{upperLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                 </div>
                 <div className="flex justify-between gap-2">
-                    <div className="flex flex-row-reverse gap-1">{lowerRightQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
+                    <div className="flex gap-1">{lowerRightQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                     <div className="flex gap-1">{lowerLeftQuadrant.map(num => <Tooth key={num} number={num} isSelected={selectedTeeth.includes(num)} onClick={handleToothClick} />)}</div>
                 </div>
             </div>
