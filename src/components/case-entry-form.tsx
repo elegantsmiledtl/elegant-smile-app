@@ -292,7 +292,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                         <FormItem>
                           <FormLabel className="font-bold">Photo</FormLabel>
                             <FormControl>
-                                <>
+                                <div>
                                     <input
                                       type="file"
                                       accept="image/*"
@@ -308,7 +308,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                                       <Upload className="mr-2 h-4 w-4" />
                                       {photoDataUri ? 'Change Photo' : 'Upload Photo'}
                                     </Button>
-                                </>
+                                </div>
                             </FormControl>
                             {photoDataUri && (
                                 <div className="relative mt-2 w-full max-w-xs aspect-square rounded-md border p-1">
