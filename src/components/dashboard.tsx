@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from 'recharts';
@@ -36,7 +37,6 @@ export default function Dashboard({ cases }: DashboardProps) {
         totalTeeth: 0,
         totalMaterials: 0,
         casesByDentist: [],
-        prosthesisTypeDistribution: [],
         materialUsage: [],
         teethByMaterial: [],
     };
@@ -46,11 +46,6 @@ export default function Dashboard({ cases }: DashboardProps) {
       return acc;
     }, {} as Record<string, number>);
 
-    const prosthesisTypeDistribution = cases.reduce((acc, c) => {
-        acc[c.prosthesisType] = (acc[c.prosthesisType] || 0) + 1;
-        return acc;
-    }, {} as Record<string, number>);
-    
     const materialUsage = cases.reduce((acc, c) => {
         const materials = c.material.split(',').map(m => m.trim()).filter(m => m);
         materials.forEach(material => {
@@ -83,7 +78,6 @@ export default function Dashboard({ cases }: DashboardProps) {
         totalTeeth,
         totalMaterials,
         casesByDentist: Object.entries(casesByDentist).map(([name, value]) => ({ name, cases: value })),
-        prosthesisTypeDistribution: Object.entries(prosthesisTypeDistribution).map(([name, value]) => ({ name, value })),
         materialUsage: Object.entries(materialUsage).map(([name, value]) => ({ name, count: value })),
         teethByMaterial: Object.entries(teethByMaterial).map(([name, value]) => ({ name, teeth: value })),
     }
@@ -96,7 +90,7 @@ export default function Dashboard({ cases }: DashboardProps) {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="lg:col-span-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Teeth</CardTitle>
@@ -135,24 +129,6 @@ export default function Dashboard({ cases }: DashboardProps) {
         </Card>
         <Card className="lg:col-span-2">
             <CardHeader>
-                <CardTitle>Prosthesis Type Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                        <Pie data={stats.prosthesisTypeDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
-                            {stats.prosthesisTypeDistribution.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                    </PieChart>
-                </ResponsiveContainer>
-            </CardContent>
-        </Card>
-        <Card className="lg:col-span-3">
-            <CardHeader>
                 <CardTitle>Case Count by Material</CardTitle>
             </CardHeader>
             <CardContent>
@@ -167,7 +143,7 @@ export default function Dashboard({ cases }: DashboardProps) {
                 </ResponsiveContainer>
             </CardContent>
         </Card>
-         <Card className="lg:col-span-3">
+         <Card className="lg:col-span-2">
             <CardHeader>
                 <CardTitle>Teeth Count by Material</CardTitle>
             </CardHeader>
