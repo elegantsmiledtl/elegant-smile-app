@@ -79,6 +79,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             <TableHead>Patient</TableHead>
             <TableHead>Dentist</TableHead>
             <TableHead>Tooth #(s)</TableHead>
+            <TableHead>Tooth Count</TableHead>
             <TableHead>Prosthesis</TableHead>
             <TableHead>Material</TableHead>
             <TableHead>Shade</TableHead>
@@ -98,6 +99,9 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
                 </Link>
               </TableCell>
               <TableCell>{c.toothNumbers}</TableCell>
+              <TableCell className="font-medium">
+                {c.toothNumbers.split(',').filter(t => t.trim() !== '').length}
+              </TableCell>
               <TableCell>{c.prosthesisType}</TableCell>
               <TableCell>{c.material}</TableCell>
               <TableCell>{c.shade}</TableCell>
