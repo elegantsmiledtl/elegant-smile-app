@@ -15,13 +15,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, Save } from 'lucide-react';
+import { PlusCircle, Save, Upload, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import type { DentalCase } from '@/types';
 import ToothSelector from './tooth-selector';
 import { Checkbox } from './ui/checkbox';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useRef } from 'react';
 
 const formSchema = z.object({
   patientName: z.string().min(2, { message: 'Patient name must be at least 2 characters.' }),
@@ -31,6 +33,7 @@ const formSchema = z.object({
   material: z.string().min(1, { message: 'At least one material must be selected.' }),
   shade: z.string().min(1, { message: 'Shade is required.' }),
   notes: z.string().optional(),
+  photoDataUri: z.string().optional(),
 });
 
 type CaseFormValues = z.infer<typeof formSchema>;
@@ -47,6 +50,7 @@ const prosthesisTypeOptions = ["Separate", "Bridge"];
 export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseEntryFormProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<CaseFormValues>({
     resolver: zodResolver(formSchema),
@@ -58,6 +62,7 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
       material: caseToEdit?.material || '',
       shade: caseToEdit?.shade || '',
       notes: caseToEdit?.notes || '',
+      photoDataUri: caseToEdit?.photoDataUri || '',
     },
   });
   
@@ -76,6 +81,34 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
     }
   }
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
+        toast({
+          variant: 'destructive',
+          title: 'File Too Large',
+          description: 'Please select an image smaller than 4MB.',
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue('photoDataUri', reader.result as string, { shouldValidate: true });
+      };
+      reader.onerror = () => {
+         toast({
+          variant: 'destructive',
+          title: 'Error Reading File',
+          description: 'There was a problem reading the selected file.',
+        });
+      }
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const photoDataUri = form.watch('photoDataUri');
+
   return (
     <Card className="shadow-lg">
       <CardHeader>
@@ -87,168 +120,223 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="patientName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Patient Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="dentistName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Dentist Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} disabled={!!caseToEdit?.dentistName} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="toothNumbers"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Tooth Number(s)</FormLabel>
-                  <FormControl>
-                    <ToothSelector value={field.value} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="prosthesisType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Prosthesis Type</FormLabel>
-                   <div className="grid grid-cols-2 gap-2">
-                    {prosthesisTypeOptions.map((item) => (
-                      <FormField
-                        key={item}
-                        control={form.control}
-                        name="prosthesisType"
-                        render={({ field }) => {
-                          return (
-                            <FormItem
-                              key={item}
-                              className="flex flex-row items-start space-x-3 space-y-0"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.split(', ').includes(item)}
-                                  onCheckedChange={(checked) => {
-                                    const currentValues = field.value ? field.value.split(', ').filter(v => v) : [];
-                                    if (checked) {
-                                      field.onChange([...currentValues, item].join(', '));
-                                    } else {
-                                      field.onChange(
-                                        currentValues.filter(
-                                          (value) => value !== item
-                                        ).join(', ')
-                                      );
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {item}
-                              </FormLabel>
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="material"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Material</FormLabel>
-                  <div className="grid grid-cols-2 gap-2">
-                    {materialOptions.map((item) => (
-                      <FormField
-                        key={item}
-                        control={form.control}
-                        name="material"
-                        render={({ field }) => {
-                          return (
-                            <FormItem
-                              key={item}
-                              className="flex flex-row items-start space-x-3 space-y-0"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.split(', ').includes(item)}
-                                  onCheckedChange={(checked) => {
-                                    const currentValues = field.value ? field.value.split(', ').filter(v => v) : [];
-                                    if (checked) {
-                                      field.onChange([...currentValues, item].join(', '));
-                                    } else {
-                                      field.onChange(
-                                        currentValues.filter(
-                                          (value) => value !== item
-                                        ).join(', ')
-                                      );
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {item}
-                              </FormLabel>
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="shade"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Shade</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., A2, B1" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Notes / Instructions</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Add any specific instructions..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full bg-accent hover:bg-accent/90">
+            <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="patientName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Patient Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="dentistName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Dentist Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={!!caseToEdit?.dentistName} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="toothNumbers"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Tooth Number(s)</FormLabel>
+                          <FormControl>
+                            <ToothSelector value={field.value} onChange={field.onChange} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name="prosthesisType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Prosthesis Type</FormLabel>
+                           <div className="grid grid-cols-2 gap-2">
+                            {prosthesisTypeOptions.map((item) => (
+                              <FormField
+                                key={item}
+                                control={form.control}
+                                name="prosthesisType"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={item}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.split(', ').includes(item)}
+                                          onCheckedChange={(checked) => {
+                                            const currentValues = field.value ? field.value.split(', ').filter(v => v) : [];
+                                            if (checked) {
+                                              field.onChange([...currentValues, item].join(', '));
+                                            } else {
+                                              field.onChange(
+                                                currentValues.filter(
+                                                  (value) => value !== item
+                                                ).join(', ')
+                                              );
+                                            }
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {item}
+                                      </FormLabel>
+                                    </FormItem>
+                                  );
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="material"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Material</FormLabel>
+                          <div className="grid grid-cols-2 gap-2">
+                            {materialOptions.map((item) => (
+                              <FormField
+                                key={item}
+                                control={form.control}
+                                name="material"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={item}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.split(', ').includes(item)}
+                                          onCheckedChange={(checked) => {
+                                            const currentValues = field.value ? field.value.split(', ').filter(v => v) : [];
+                                            if (checked) {
+                                              field.onChange([...currentValues, item].join(', '));
+                                            } else {
+                                              field.onChange(
+                                                currentValues.filter(
+                                                  (value) => value !== item
+                                                ).join(', ')
+                                              );
+                                            }
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {item}
+                                      </FormLabel>
+                                    </FormItem>
+                                  );
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="shade"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Shade</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                </div>
+                 <div className="space-y-4">
+                     <FormField
+                      control={form.control}
+                      name="notes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Notes / Instructions</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Add any specific instructions..." {...field} className="min-h-[100px]"/>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="photoDataUri"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold">Photo</FormLabel>
+                            <FormControl>
+                                <>
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      ref={fileInputRef}
+                                      onChange={handleFileChange}
+                                      className="hidden"
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      onClick={() => fileInputRef.current?.click()}
+                                    >
+                                      <Upload className="mr-2 h-4 w-4" />
+                                      {photoDataUri ? 'Change Photo' : 'Upload Photo'}
+                                    </Button>
+                                </>
+                            </FormControl>
+                            {photoDataUri && (
+                                <div className="relative mt-2 w-full max-w-xs aspect-square rounded-md border p-1">
+                                    <Image
+                                      src={photoDataUri}
+                                      alt="Photo preview"
+                                      fill
+                                      className="object-contain rounded-md"
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="destructive"
+                                      size="icon"
+                                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                                      onClick={() => form.setValue('photoDataUri', '')}
+                                    >
+                                        <X className="h-4 w-4"/>
+                                    </Button>
+                                </div>
+                            )}
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                </div>
+            </div>
+            
+            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 mt-6">
                 <Save className="mr-2 h-4 w-4" />
                 {isEditMode ? 'Save Changes' : 'Add Case'}
             </Button>

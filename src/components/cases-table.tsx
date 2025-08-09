@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit, Smartphone, Monitor } from 'lucide-react';
+import { Trash2, Edit, Smartphone, Monitor, Image as ImageIcon } from 'lucide-react';
 import type { DentalCase } from '@/types';
 
 import {
@@ -35,6 +35,7 @@ import {
 import CaseEntryForm from './case-entry-form';
 import { useState } from 'react';
 import { format } from 'date-fns';
+import Image from 'next/image';
 
 interface CasesTableProps {
   cases: DentalCase[];
@@ -45,13 +46,20 @@ interface CasesTableProps {
 export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesTableProps) {
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [caseToEdit, setCaseToEdit] = useState<DentalCase | null>(null);
+  const [photoToShow, setPhotoToShow] = useState<string | null>(null);
 
   const handleEditClick = (caseData: DentalCase) => {
     setCaseToEdit(caseData);
     setIsEditDialogOpen(true);
   }
   
+  const handlePhotoClick = (photoDataUri: string) => {
+    setPhotoToShow(photoDataUri);
+    setIsPhotoDialogOpen(true);
+  }
+
   const formatDate = (timestamp: any) => {
     if (timestamp && timestamp.toDate) {
       return format(timestamp.toDate(), 'PPP p');
@@ -82,6 +90,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             <TableHead>Prosthesis</TableHead>
             <TableHead>Material</TableHead>
             <TableHead>Shade</TableHead>
+            <TableHead>Photo</TableHead>
             <TableHead>Source</TableHead>
             <TableHead>Notes</TableHead>
             {showActions && <TableHead className="text-right">Actions</TableHead>}
@@ -102,9 +111,18 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
               <TableCell>{c.material}</TableCell>
               <TableCell>{c.shade}</TableCell>
               <TableCell>
+                {c.photoDataUri ? (
+                  <Button variant="ghost" size="icon" onClick={() => handlePhotoClick(c.photoDataUri!)}>
+                    <ImageIcon className="h-5 w-5" />
+                  </Button>
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
+              </TableCell>
+              <TableCell>
                 <div className="flex items-center gap-2">
                     {c.source === 'Mobile' ? <Smartphone className="h-4 w-4 text-muted-foreground" /> : <Monitor className="h-4 w-4 text-muted-foreground" />}
-                    {c.source}
+                    {c.source || 'Desktop'}
                 </div>
               </TableCell>
               <TableCell className="max-w-[200px] truncate">{c.notes}</TableCell>
@@ -142,7 +160,7 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
         </TableBody>
       </Table>
        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-4xl">
             <DialogHeader>
               <DialogTitle>Edit Case</DialogTitle>
             </DialogHeader>
@@ -158,6 +176,18 @@ export default function CasesTable({ cases, onDeleteCase, onUpdateCase }: CasesT
             )}
           </DialogContent>
         </Dialog>
+        <Dialog open={isPhotoDialogOpen} onOpenChange={setIsPhotoDialogOpen}>
+          <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                  <DialogTitle>Photo Preview</DialogTitle>
+              </DialogHeader>
+              {photoToShow && (
+                  <div className="relative mt-4 w-full aspect-video">
+                      <Image src={photoToShow} alt="Case photo" fill className="object-contain" />
+                  </div>
+              )}
+          </DialogContent>
+      </Dialog>
     </div>
   );
 }
