@@ -84,11 +84,11 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 4 * 1024 * 1024) { // 4MB limit
+      if (file.size > 1 * 1024 * 1024) { // 1MB limit for safety
         toast({
           variant: 'destructive',
-          title: 'File Too Large',
-          description: 'Please select an image smaller than 4MB.',
+          title: 'Image Too Large',
+          description: 'The selected image is over 1MB. Please resize it or choose a smaller file to avoid database errors.',
         });
         return;
       }
@@ -346,3 +346,5 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
     </Card>
   );
 }
+
+    
