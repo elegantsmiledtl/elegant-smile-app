@@ -9,6 +9,5 @@ export type DentalCase = {
   shade: string;
   createdAt: any; // Using 'any' for Firestore ServerTimestamp flexibility
   notes?: string;
-  photoDataUri?: string;
   source?: 'Mobile' | 'Desktop';
 };

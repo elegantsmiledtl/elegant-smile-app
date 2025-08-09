@@ -15,15 +15,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, Save, Upload, X } from 'lucide-react';
+import { PlusCircle, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import type { DentalCase } from '@/types';
 import ToothSelector from './tooth-selector';
 import { Checkbox } from './ui/checkbox';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { useRef } from 'react';
 
 const formSchema = z.object({
   patientName: z.string().min(2, { message: 'Patient name must be at least 2 characters.' }),
@@ -33,7 +31,6 @@ const formSchema = z.object({
   material: z.string().min(1, { message: 'At least one material must be selected.' }),
   shade: z.string().min(1, { message: 'Shade is required.' }),
   notes: z.string().optional(),
-  photoDataUri: z.string().optional(),
 });
 
 type CaseFormValues = z.infer<typeof formSchema>;
@@ -50,7 +47,6 @@ const prosthesisTypeOptions = ["Separate", "Bridge"];
 export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseEntryFormProps) {
   const { toast } = useToast();
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<CaseFormValues>({
     resolver: zodResolver(formSchema),
@@ -62,7 +58,6 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
       material: caseToEdit?.material || '',
       shade: caseToEdit?.shade || '',
       notes: caseToEdit?.notes || '',
-      photoDataUri: caseToEdit?.photoDataUri || '',
     },
   });
   
@@ -80,34 +75,6 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
         // The toast and reset are now handled in the page component.
     }
   }
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 1 * 1024 * 1024) { // 1MB limit for safety
-        toast({
-          variant: 'destructive',
-          title: 'Image Too Large',
-          description: 'The selected image is over 1MB. Please resize it or choose a smaller file to avoid database errors.',
-        });
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        form.setValue('photoDataUri', reader.result as string, { shouldValidate: true });
-      };
-      reader.onerror = () => {
-         toast({
-          variant: 'destructive',
-          title: 'Error Reading File',
-          description: 'There was a problem reading the selected file.',
-        });
-      }
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const photoDataUri = form.watch('photoDataUri');
 
   return (
     <Card className="shadow-lg">
@@ -285,54 +252,6 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="photoDataUri"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-bold">Photo</FormLabel>
-                            <FormControl>
-                                <div>
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      ref={fileInputRef}
-                                      onChange={handleFileChange}
-                                      className="hidden"
-                                    />
-                                    <Button
-                                      type="button"
-                                      variant="outline"
-                                      onClick={() => fileInputRef.current?.click()}
-                                    >
-                                      <Upload className="mr-2 h-4 w-4" />
-                                      {photoDataUri ? 'Change Photo' : 'Upload Photo'}
-                                    </Button>
-                                </div>
-                            </FormControl>
-                            {photoDataUri && (
-                                <div className="relative mt-2 w-full max-w-xs aspect-square rounded-md border p-1">
-                                    <Image
-                                      src={photoDataUri}
-                                      alt="Photo preview"
-                                      fill
-                                      className="object-contain rounded-md"
-                                    />
-                                    <Button
-                                      type="button"
-                                      variant="destructive"
-                                      size="icon"
-                                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                                      onClick={() => form.setValue('photoDataUri', '')}
-                                    >
-                                        <X className="h-4 w-4"/>
-                                    </Button>
-                                </div>
-                            )}
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                 </div>
             </div>
             
@@ -346,5 +265,3 @@ export default function CaseEntryForm({ caseToEdit, onUpdate, onAddCase }: CaseE
     </Card>
   );
 }
-
-    
