@@ -20,11 +20,32 @@ export function convertJsonToCsv(jsonData: DentalCase[]): string {
     if (jsonData.length === 0) {
         return "";
     }
-    const keys = Object.keys(jsonData[0]);
+
+    // Add toothCount to each case object
+    const dataWithToothCount = jsonData.map(caseItem => {
+        const toothCount = caseItem.toothNumbers.split(',').filter(t => t.trim() !== '').length;
+        // Create a new object to control property order
+        return {
+            id: caseItem.id,
+            createdAt: caseItem.createdAt,
+            patientName: caseItem.patientName,
+            dentistName: caseItem.dentistName,
+            toothNumbers: caseItem.toothNumbers,
+            toothCount: toothCount,
+            prosthesisType: caseItem.prosthesisType,
+            material: caseItem.material,
+            shade: caseItem.shade,
+            notes: caseItem.notes,
+            source: caseItem.source,
+        };
+    });
+    
+    const keys = Object.keys(dataWithToothCount[0]);
     const header = keys.join(',') + '\n';
-    const rows = jsonData.map(row => {
+
+    const rows = dataWithToothCount.map(row => {
         return keys.map(key => {
-            let cellData = row[key as keyof DentalCase];
+            let cellData = row[key as keyof typeof row];
             
             // Handle Firestore Timestamps
             if (key === 'createdAt' && cellData && typeof (cellData as any).toDate === 'function') {
@@ -35,7 +56,7 @@ export function convertJsonToCsv(jsonData: DentalCase[]): string {
                 return cellData.toISOString().split('T')[0];
             }
             // Escape commas and quotes
-            let cell = cellData ? String(cellData) : '';
+            let cell = cellData != null ? String(cellData) : '';
             cell = cell.replace(/"/g, '""');
             if (cell.includes(',')) {
                 cell = `"${cell}"`;
