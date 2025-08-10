@@ -1,0 +1,12 @@
+{
+  "apphosting": {
+    "source": ".",
+    "backends": [
+      {
+        "id": "elegant-smile-backend",
+        "region": "us-central1",
+        "serviceAccount": "app-hosting-SA@elegant-smile-r6jex.iam.gserviceaccount.com"
+      }
+    ]
+  }
+}
