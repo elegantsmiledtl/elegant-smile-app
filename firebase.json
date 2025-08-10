@@ -1,5 +1,6 @@
 {
   "apphosting": {
+    "source": ".",
     "backends": [
       {
         "id": "elegant-smile-backend",
