@@ -19,7 +19,7 @@ function AddCasePageContent() {
   const [isMounted, setIsMounted] = useState(false);
   const [key, setKey] = useState(Date.now()); // Add key state to re-mount the form
   
-  const source = searchParams.get('source') as 'Mobile' | 'Desktop' | null;
+    const source = (searchParams.get('source') as 'Mobile' | 'Desktop' | null) ?? undefined;
 
   useEffect(() => {
     setIsMounted(true);
@@ -28,17 +28,15 @@ function AddCasePageContent() {
   const handleAddCase = async (newCase: Omit<DentalCase, 'id' | 'createdAt'>) => {
     if (!isMounted) return;
     try {
-      const caseWithSource = { 
-          ...newCase, 
-          source: source === 'Mobile' ? 'Mobile' : 'Desktop'
-      };
-      await addCase(caseWithSource);
-      
+        const caseWithSource: Omit<DentalCase, "id" | "createdAt"> = {
+            ...newCase,
+            source: source === "Mobile" ? "Mobile" : "Desktop",
+        };
+      await addCase(caseWithSource as Omit<DentalCase, 'id' | 'createdAt'>);
       toast({
         title: 'GOT IT',
         description: `Case for ${newCase.patientName} has been successfully added.`,
       });
-
       // Reset the form by changing the key, which forces a re-render
       setKey(Date.now());
 
