@@ -1,6 +1,6 @@
 
 // src/lib/firebase.ts
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
   getFirestore, 
   collection, 
@@ -25,7 +25,7 @@ const firebaseConfig = {
   messagingSenderId: "684195793511"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const casesCollection = collection(db, 'dentalCases');
